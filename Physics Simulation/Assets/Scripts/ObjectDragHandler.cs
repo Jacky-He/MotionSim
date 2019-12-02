@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ObjectDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler
+public class ObjectDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
 
     private Vector3 originalPosition;
@@ -11,21 +11,31 @@ public class ObjectDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler
     public int index;
     public float spacing;
 
+    private Transform parentToReturnTo = null;
+
+    public GameObject spritePreFab;
+
+    public void OnBeginDrag (PointerEventData eventData)
+    {
+        this.parentToReturnTo = this.transform.parent;
+        this.transform.SetParent(this.transform.parent.parent.parent.parent); //the canvass
+
+        //disable the blocking of the raycast for the object so that the canvass can receive the signal
+        this.GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
     public void OnDrag(PointerEventData eventData)
     {
-        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            transform.position = Input.touches[0].position;
-        }
-        else
-        {
-            transform.position = Input.mousePosition;
-        }
+        transform.position = eventData.position;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.localPosition = new Vector3(0, -((170+spacing)*index+85), 0);
+        this.transform.SetParent(this.parentToReturnTo);
+        transform.localPosition = new Vector3(0, -((170 + spacing) * index + 85), 0);
+        
+        //turns the thing back on
+        this.GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
 
     // Start is called before the first frame update

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class ObjectListController : MonoBehaviour, IDropHandler
+public class ObjectListController : MonoBehaviour
 {
     [SerializeField]
     private GameObject circleTemplate;
@@ -17,26 +17,19 @@ public class ObjectListController : MonoBehaviour, IDropHandler
     //stores the objects that are displayed which are instantiated from templateList every time populate is called
     private List<GameObject> existingRefs = new List<GameObject>();
 
-    //handling the dropping of the objects
-    public void OnDrop(PointerEventData eventData)
-    {
-        RectTransform scrollViewRect = transform as RectTransform;
-        Vector3 pos;
-        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            pos = Input.touches[0].position;
-        }
-        else
-        {
-            pos = Input.mousePosition;
-        }
-        //checks if pos is inside of scrollViewRect
-        if (!RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, pos))
-        {
-            //implement drop code
-        }
-        //otherwise, do nothing;
-    }
+    ////handling the dropping of the objects
+    //public void OnDrop(PointerEventData eventData)
+    //{
+    //    RectTransform scrollViewRect = transform as RectTransform;
+    //    Vector3 pos;
+    //    pos = eventData.position;
+    //    //checks if pos is inside of scrollViewRect
+    //    if (!RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, pos))
+    //    {
+    //        //implement drop code
+    //    }
+    //    //otherwise, do nothing;
+    //}
 
     //Populate the list
     private void Populate ()
@@ -63,10 +56,10 @@ public class ObjectListController : MonoBehaviour, IDropHandler
             obj.SetActive(true);
             obj.GetComponent<ObjectDragHandler>().index = i;
             obj.GetComponent<ObjectDragHandler>().spacing = scrollContentView.GetComponent<VerticalLayoutGroup>().spacing;
+            obj.GetComponent<Image>().color = Random.ColorHSV();
             obj.transform.SetParent(templateList[i].transform.parent, false);
             existingRefs.Add(obj);
         }
-
     }
 
     // Start is called before the first frame update
