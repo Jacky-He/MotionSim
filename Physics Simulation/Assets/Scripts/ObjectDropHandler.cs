@@ -18,20 +18,17 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
         //check if pos is inside of scrollViewRect
         if (!RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, pos))
         {
+
             //this is the object being dropped
             //instantiate a new object in the canvass
             GameObject ui = eventData.pointerDrag;
             GameObject reference = ui.GetComponent<ObjectDragHandler>().spritePreFab;
             GameObject newObj = Instantiate(reference) as GameObject;
             newObj.SetActive(true);
-            newObj.transform.position = eventData.position;
-            
-            //GameObject obj = Instantiate(eventData.pointerDrag) as GameObject;
-            //obj.SetActive(true);
-            //obj.GetComponent<CanvasGroup>().blocksRaycasts = true;
-            //obj.transform.SetParent(eventData.pointerDrag.transform.parent, false);
-            //obj.transform.position = eventData.position;
-            //implement drop code
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(eventData.position);
+            worldPos.z = 0;
+            newObj.transform.position = worldPos;
+            Util.AddSprite(newObj);
         }
         //otherwise do nothing;
     }

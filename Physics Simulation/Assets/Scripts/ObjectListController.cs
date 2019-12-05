@@ -10,6 +10,8 @@ public class ObjectListController : MonoBehaviour
     [SerializeField]
     private GameObject circleTemplate;
     [SerializeField]
+    private GameObject fixedRectTemplate;
+    [SerializeField]
     private GameObject scrollContentView;
 
     private List<GameObject> templateList = new List <GameObject> ();
@@ -17,22 +19,8 @@ public class ObjectListController : MonoBehaviour
     //stores the objects that are displayed which are instantiated from templateList every time populate is called
     private List<GameObject> existingRefs = new List<GameObject>();
 
-    ////handling the dropping of the objects
-    //public void OnDrop(PointerEventData eventData)
-    //{
-    //    RectTransform scrollViewRect = transform as RectTransform;
-    //    Vector3 pos;
-    //    pos = eventData.position;
-    //    //checks if pos is inside of scrollViewRect
-    //    if (!RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, pos))
-    //    {
-    //        //implement drop code
-    //    }
-    //    //otherwise, do nothing;
-    //}
-
     //Populate the list
-    private void Populate ()
+    private void PopulateView ()
     {
         //if populate is called again, make sure to destroy the previous objects so that new objects can be instantiated.
         if (existingRefs.Count > 0)
@@ -42,12 +30,6 @@ public class ObjectListController : MonoBehaviour
                 Destroy(obj);
             }
             existingRefs.Clear();
-        }
-
-        //adds the objects into the scrollview
-        for (int x = 0; x < 20; x++)
-        {
-            templateList.Add(circleTemplate);
         }
 
         for (int i = 0; i < templateList.Count; i++)
@@ -62,10 +44,18 @@ public class ObjectListController : MonoBehaviour
         }
     }
 
+    private void PopulateList ()
+    {
+        //Adds the objects into the scrollview
+        templateList.Add(circleTemplate);
+        templateList.Add(fixedRectTemplate);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        Populate();
+        PopulateList();
+        PopulateView();
     }
 
     // Update is called once per frame
