@@ -6,19 +6,12 @@ using UnityEngine.UI;
 
 public class ObjectDropHandler : MonoBehaviour, IDropHandler
 {
-
-
-    [SerializeField]
-    private GameObject scrollView;
-
     public void OnDrop (PointerEventData eventData)
     {
-        RectTransform scrollViewRect = scrollView.transform as RectTransform;
         Vector3 pos = eventData.position;
         //check if pos is inside of scrollViewRect
-        if (!RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, pos))
+        if (Util.OnCanvas(pos))
         {
-
             //this is the object being dropped
             //instantiate a new object in the canvass
             GameObject ui = eventData.pointerDrag;
@@ -28,7 +21,6 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(eventData.position);
             worldPos.z = 0;
             newObj.transform.position = worldPos;
-            Util.AddSprite(newObj);
         }
         //otherwise do nothing;
     }

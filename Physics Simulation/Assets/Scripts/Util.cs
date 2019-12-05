@@ -4,32 +4,22 @@ using UnityEngine;
 
 public class Util: MonoBehaviour
 {
-    private static List<GameObject> allSprites = new List<GameObject>();
+    private static GameObject scrollView;
+    public static bool sliderSelected = false;
 
-    private static Dictionary<GameObject, List <Vector3>> posStore = new Dictionary <GameObject, List <Vector3>>();
-
-    public static void AddSprite (GameObject obj)
+    public static bool OnCanvas (Vector3 screenPos)
     {
-
-        allSprites.Add(obj);
-    }
-
-    public static void clearAllSprites ()
-    {
-        allSprites.Clear();
-    }
-
-    void FixedUpdate()
-    {
-        foreach (GameObject obj in allSprites)
-        {
-            if (posStore[obj] == null) posStore[obj] = new List<Vector3>();
-            posStore[obj].Add(obj.transform.position);
-        }
+        RectTransform scrollViewRect = scrollView.transform as RectTransform;
+        return !RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, screenPos) && !sliderSelected;
     }
 
     void Update()
     {
-        Debug.Log("called");
+        
+    }
+
+    void Start()
+    {
+        scrollView = GameObject.Find("ObjectsScrollView");
     }
 }

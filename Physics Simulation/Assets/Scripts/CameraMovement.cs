@@ -8,9 +8,6 @@ public class CameraMovement : MonoBehaviour
     private float zoomMax = 1000;
     private float zoomMin = 40;
 
-    [SerializeField]
-    private GameObject scrollView;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -34,9 +31,6 @@ public class CameraMovement : MonoBehaviour
 
     private void UpdateMobile()
     {
-
-        RectTransform scrollViewRect = scrollView.transform as RectTransform;
-
         if (Input.touchCount == 1)
         {
             //true only the first time the mouse is touched down
@@ -45,7 +39,7 @@ public class CameraMovement : MonoBehaviour
                 touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             }
             //for draggin camera around (panning) Later also needs to check if they are on any objects
-            if (!RectTransformUtility.RectangleContainsScreenPoint (scrollViewRect, Camera.main.WorldToScreenPoint(touchStart)) && Input.GetMouseButton(0))
+            if (Util.OnCanvas(Camera.main.WorldToScreenPoint(touchStart)) && Input.GetMouseButton(0))
             {
                 Vector3 direction = touchStart - Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Camera.main.transform.position += direction;
@@ -58,7 +52,7 @@ public class CameraMovement : MonoBehaviour
             Touch touchOne = Input.GetTouch(1);
 
             //if both touches are not in the scrollview;
-            if (!RectTransformUtility.RectangleContainsScreenPoint (scrollViewRect, Camera.main.WorldToScreenPoint(touchZero.position)) && !RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, Camera.main.WorldToScreenPoint(touchOne.position)))
+            if (Util.OnCanvas (Camera.main.WorldToScreenPoint(touchZero.position)) && Util.OnCanvas(Camera.main.WorldToScreenPoint(touchOne.position)))
             {
                 Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
                 Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
@@ -76,15 +70,13 @@ public class CameraMovement : MonoBehaviour
     //for desktops
     private void UpdateDesktop()
     {
-        RectTransform scrollViewRect = scrollView.transform as RectTransform;
-
         //true only the first time the mouse is touched down
         if (Input.GetMouseButtonDown(0))
         {
             touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
         //for draggin camera around (panning) Later also needs to check if they are on any objects
-        if (!RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, Camera.main.WorldToScreenPoint(touchStart)) && Input.GetMouseButton(0))
+        if (Util.OnCanvas(Camera.main.WorldToScreenPoint(touchStart)) && Input.GetMouseButton(0))
         {
             Vector3 direction = touchStart - Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Camera.main.transform.position += direction;
