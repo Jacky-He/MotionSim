@@ -39,6 +39,7 @@ public class ReplayControl : MonoBehaviour
     private void Adjust()
     {
         if (pointsInTime.Count == 0) return;
+        globalIndex = 0; //so that when the user presses stop, the objects are set to their initial positions (if it was replaying)
         float percentage = SliderControl.percentage;
         int index = Mathf.RoundToInt(percentage * (pointsInTime.Count - 1)); //shouldn't overflow;
         PointInTime p = pointsInTime[index];
@@ -56,7 +57,6 @@ public class ReplayControl : MonoBehaviour
     {
         if (pointsInTime.Count > 0)
         {
-            Debug.Log("sdf");
             PointInTime init = pointsInTime[0];
             this.transform.position = init.position;
             this.transform.rotation = init.rotation;

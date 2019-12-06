@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ButtonsControl : MonoBehaviour
 {
-    private bool playState = false;
+    private static bool playState = false;
     private GameObject playButton;
     private GameObject stopButton;
     private GameObject replayButton;
@@ -20,12 +20,14 @@ public class ButtonsControl : MonoBehaviour
         //if not playing anymore, set everything to original position;
         if (!playState)
         {
+            stopButton.SetActive(false);
             ReplayControl.recording = false;
             ReplayControl.resetting = true;
             Physics2D.autoSimulation = false;
         }
         else
         {
+            stopButton.SetActive(true);
             ReplayControl.needsClearing = false;
             ReplayControl.resetting = false;
             ReplayControl.replaying = false;
@@ -57,6 +59,13 @@ public class ButtonsControl : MonoBehaviour
         ReplayControl.needsClearing = true;
         replayButton.SetActive(false);
         clearButton.SetActive(false);
+        stopButton.SetActive(false);
+        playState = false;
+        ReplayControl.recording = false;
+        ReplayControl.resetting = false;
+        ReplayControl.replaying = false;
+        ReplayControl.sliderReplaying = false;
+        Physics2D.autoSimulation = false;
     }
 
     // Start is called before the first frame update
@@ -76,6 +85,7 @@ public class ButtonsControl : MonoBehaviour
         {
             replayButton.SetActive(false);
             clearButton.SetActive(false);
+            stopButton.SetActive(false);
             initState = true;
         }
     }
