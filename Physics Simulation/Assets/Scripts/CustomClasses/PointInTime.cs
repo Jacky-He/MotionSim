@@ -16,4 +16,18 @@ public class PointInTime
         this.velocity = _velocity;
         this.angularVelocity = _angularVelocity;
     }
+
+    public float getOption (GraphOptions option)
+    {
+        switch (option)
+        {
+            case GraphOptions.positionX:
+                return this.position.x;
+            case GraphOptions.positionY:
+                return this.position.y;
+            default:
+                return 0f;
+        }
+    }
+
 }

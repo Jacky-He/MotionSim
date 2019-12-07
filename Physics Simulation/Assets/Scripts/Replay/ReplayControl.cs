@@ -17,11 +17,14 @@ public class ReplayControl : MonoBehaviour
 
     private List<PointInTime> pointsInTime;
 
+    //for graphing
+    private static GameObject canvassObject = null;
+    private static RectTransform graphWindow = null;
+
     // Start is called before the first frame update
     void Start()
     {
-        pointsInTime = new List<PointInTime>();
-        helperCnt++;
+        
     }
 
     public static bool replaying = false;
@@ -49,8 +52,11 @@ public class ReplayControl : MonoBehaviour
 
     private void Record ()
     {
+        if (!graphWindow.gameObject.activeSelf) graphWindow.gameObject.SetActive(true);
         Rigidbody2D rb = this.GetComponent<Rigidbody2D>();
         pointsInTime.Add(new PointInTime(this.transform.position, this.transform.rotation, rb.velocity, rb.angularVelocity));
+        GraphControl gc = graphWindow.gameObject.GetComponent<GraphControl>();
+        gc.ShowGraph(pointsInTime, GraphOptions.positionY);
     }
 
     private void Reset()
@@ -94,5 +100,16 @@ public class ReplayControl : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void Awake()
+    {
+        pointsInTime = new List<PointInTime>();
+        helperCnt++;
+        if (graphWindow == null)
+        {
+            canvassObject = GameObject.Find("Canvas");
+            graphWindow = canvassObject.transform.Find("GraphWindow").GetComponent<RectTransform>();
+        }
     }
 }
