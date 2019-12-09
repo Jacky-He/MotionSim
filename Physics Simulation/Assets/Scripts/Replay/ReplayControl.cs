@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ReplayControl : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class ReplayControl : MonoBehaviour
     public static bool replaying = false;
 
     public static bool controlledByAnim = true;
+    public static bool adjustable = true;
 
     private static int helperCnt = 0;
 
@@ -37,6 +39,9 @@ public class ReplayControl : MonoBehaviour
     private Transform spriteTransform;
 
     private Collider2D collider;
+
+    //for dragging
+    private Vector3 touchStart;
 
     // Start is called before the first frame update
     void Start()
@@ -132,16 +137,29 @@ public class ReplayControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            //check if the input is within bounds of this object
-            Vector3 touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            touchStart.z = 0;
-            if (collider.bounds.Contains(touchStart))
-            {
-                focusedObject = this.gameObject;
-            }
-        }
+        
+    }
+
+    //for dragging objects around
+    private void OnMouseDown()
+    {
+        Util.objectDragged = true;
+        touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        touchStart.z = 0;
+        focusedObject = this.gameObject;
+    }
+
+    private void OnMouseDrag()
+    {
+        Vector3 touch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        touch.z = 0;
+        spriteTransform.position += (touch - touchStart);
+        touchStart = touch;
+    }
+
+    private void OnMouseUp()
+    {
+        Util.objectDragged = false;
     }
 
     //when floating point precision issues start to occur
@@ -154,7 +172,7 @@ public class ReplayControl : MonoBehaviour
     private void Awake()
     {
         //temporary
-        this.graphOption = GraphOptions.positionY;
+        this.graphOption = GraphOptions.velocityY;
         rb = this.GetComponent<Rigidbody2D>();
         spriteTransform = this.GetComponent<Transform>();
         pointsInTime = new List<PointInTime>();

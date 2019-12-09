@@ -42,7 +42,7 @@ public class GraphControl : MonoBehaviour
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
         return obj;
     }
-
+            
 
     public void ShowGraph (List<PointInTime> inputList, GraphOptions option)
     {

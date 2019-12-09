@@ -12,11 +12,12 @@ public class Util: MonoBehaviour
 {
     private static GameObject scrollView;
     public static bool sliderSelected = false;
+    public static bool objectDragged = false;
 
     public static bool OnCanvas (Vector3 screenPos)
     {
         RectTransform scrollViewRect = scrollView.transform as RectTransform;
-        return !RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, screenPos) && !sliderSelected;
+        return !RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, screenPos) && !sliderSelected && !objectDragged;
     }
 
     public static float GetAngleFromVectorFloat (Vector2 v)
@@ -29,7 +30,7 @@ public class Util: MonoBehaviour
         
     }
 
-    void Start()
+    private void Awake()
     {
         scrollView = GameObject.Find("ObjectsScrollView");
     }

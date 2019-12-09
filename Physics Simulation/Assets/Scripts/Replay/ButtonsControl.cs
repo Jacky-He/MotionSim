@@ -71,11 +71,19 @@ public class ButtonsControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
+
+    private void Awake()
+    {
         ReplayControl.controlledByAnim = true;
-        playButton = GameObject.Find("PlayButton");
-        stopButton = GameObject.Find("StopButton");
-        replayButton = GameObject.Find("ReplayButton");
-        clearButton = GameObject.Find("ClearButton");
+        if (playButton == null)
+        {
+            playButton = GameObject.Find("PlayButton");
+            stopButton = GameObject.Find("StopButton");
+            replayButton = GameObject.Find("ReplayButton");
+            clearButton = GameObject.Find("ClearButton");
+        }
     }
 
     // Update is called once per frame

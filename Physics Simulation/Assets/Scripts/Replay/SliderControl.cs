@@ -26,9 +26,13 @@ public class SliderControl : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         Util.sliderSelected = false;
     }
 
-
     // Start is called before the first frame update
     void Start()
+    {
+        
+    }
+
+    private void Awake()
     {
         slider = this.transform.GetComponent<Slider>();
         slider.value = 0f;
