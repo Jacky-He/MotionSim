@@ -23,7 +23,7 @@ public class ButtonsControl : MonoBehaviour
             stopButton.SetActive(false);
             ReplayControl.recording = false;
             ReplayControl.resetting = true;
-            Physics2D.autoSimulation = false;
+            ReplayControl.controlledByAnim = true;
         }
         else
         {
@@ -33,7 +33,7 @@ public class ButtonsControl : MonoBehaviour
             ReplayControl.replaying = false;
             ReplayControl.sliderReplaying = false;
             ReplayControl.recording = true;
-            Physics2D.autoSimulation = true;
+            ReplayControl.controlledByAnim = false;
         }
         //start the physics simulation;
     }
@@ -43,7 +43,7 @@ public class ButtonsControl : MonoBehaviour
         ReplayControl.recording = false;
         ReplayControl.sliderReplaying = true;
         ReplayControl.replaying = false;
-        Physics2D.autoSimulation = false;
+        ReplayControl.controlledByAnim = true;
         replayButton.SetActive(true);
         clearButton.SetActive(true);
     }
@@ -65,13 +65,13 @@ public class ButtonsControl : MonoBehaviour
         ReplayControl.resetting = false;
         ReplayControl.replaying = false;
         ReplayControl.sliderReplaying = false;
-        Physics2D.autoSimulation = false;
+        ReplayControl.controlledByAnim = true;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        Physics2D.autoSimulation = false;
+        ReplayControl.controlledByAnim = true;
         playButton = GameObject.Find("PlayButton");
         stopButton = GameObject.Find("StopButton");
         replayButton = GameObject.Find("ReplayButton");

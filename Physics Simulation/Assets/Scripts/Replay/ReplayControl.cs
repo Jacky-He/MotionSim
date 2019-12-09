@@ -5,11 +5,14 @@ using UnityEngine;
 public class ReplayControl : MonoBehaviour
 {
 
+    //replay
     public static bool sliderReplaying = false;
     public static bool resetting = false;
     public static bool recording = false;
+    public static bool needsClearing = false;
+    public static bool replaying = false;
 
-    public  static bool needsClearing = false;
+    public static bool controlledByAnim = true;
 
     private static int helperCnt = 0;
 
@@ -17,9 +20,23 @@ public class ReplayControl : MonoBehaviour
 
     private List<PointInTime> pointsInTime;
 
+    Vector2 prevVelocity = new Vector2(0f, 0f);
+
     //for graphing
     private static GameObject canvassObject = null;
     private static RectTransform graphWindow = null;
+    private static GraphControl gc = null;
+
+    //this is the object that is currently focused;
+    private static GameObject focusedObject;
+
+    private GraphOptions graphOption;
+
+    private Rigidbody2D rb;
+
+    private Transform spriteTransform;
+
+    private Collider2D collider;
 
     // Start is called before the first frame update
     void Start()
@@ -27,16 +44,17 @@ public class ReplayControl : MonoBehaviour
         
     }
 
-    public static bool replaying = false;
 
     void FixedUpdate()
     {
         //this object will be destroyed
+        rb.isKinematic = controlledByAnim ? true : false;
         if (needsClearing) Clear();
         if (resetting) Reset();
         if (sliderReplaying) Adjust();
         if (recording) Record();
         if (replaying) Replay();
+        if (this.outOfBound()) Clear();
     }
 
     private void Adjust()
@@ -48,15 +66,23 @@ public class ReplayControl : MonoBehaviour
         PointInTime p = pointsInTime[index];
         this.transform.position = p.position;
         this.transform.rotation = p.rotation;
+        if (focusedObject == this.gameObject)
+        {
+            gc.ShowGraph(pointsInTime, graphOption, index);
+        }
     }
 
     private void Record ()
     {
         if (!graphWindow.gameObject.activeSelf) graphWindow.gameObject.SetActive(true);
-        Rigidbody2D rb = this.GetComponent<Rigidbody2D>();
-        pointsInTime.Add(new PointInTime(this.transform.position, this.transform.rotation, rb.velocity, rb.angularVelocity));
-        GraphControl gc = graphWindow.gameObject.GetComponent<GraphControl>();
-        gc.ShowGraph(pointsInTime, GraphOptions.positionY);
+        //adds the velocity and acceleration of the objects
+        Vector2 currAcceleration = (rb.velocity - prevVelocity) / Time.fixedDeltaTime;
+        prevVelocity = rb.velocity;
+        pointsInTime.Add(new PointInTime(this.transform.position, this.transform.rotation, rb.velocity, rb.angularVelocity, currAcceleration));
+        if (focusedObject == this.gameObject)
+        {
+            gc.ShowGraph(pointsInTime, graphOption);
+        }
     }
 
     private void Reset()
@@ -66,10 +92,13 @@ public class ReplayControl : MonoBehaviour
             PointInTime init = pointsInTime[0];
             this.transform.position = init.position;
             this.transform.rotation = init.rotation;
-            Rigidbody2D rb = this.GetComponent<Rigidbody2D>();
             rb.velocity = init.velocity;
             rb.angularVelocity = init.angularVelocity;
             pointsInTime.Clear();
+        }
+        if (focusedObject == this.gameObject)
+        {
+            gc.ShowGraph(pointsInTime, graphOption); // this should show an empty graph;
         }
     }
 
@@ -86,6 +115,10 @@ public class ReplayControl : MonoBehaviour
         {
             globalIndex = 0;
         }
+        if (focusedObject == this.gameObject)
+        {
+            gc.ShowGraph(this.pointsInTime, graphOption, globalIndex);
+        }
     }
 
     private void Clear()
@@ -99,17 +132,40 @@ public class ReplayControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetMouseButtonDown(0))
+        {
+            //check if the input is within bounds of this object
+            Vector3 touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            touchStart.z = 0;
+            if (collider.bounds.Contains(touchStart))
+            {
+                focusedObject = this.gameObject;
+            }
+        }
+    }
+
+    //when floating point precision issues start to occur
+    private bool outOfBound ()
+    {
+        Vector3 position = spriteTransform.position;
+        return Mathf.Abs(position.x) > 9999.99 || Mathf.Abs(position.y) > 9999.99;
     }
 
     private void Awake()
     {
+        //temporary
+        this.graphOption = GraphOptions.positionY;
+        rb = this.GetComponent<Rigidbody2D>();
+        spriteTransform = this.GetComponent<Transform>();
         pointsInTime = new List<PointInTime>();
+        this.collider = this.GetComponent<Collider2D>();
+        rb.isKinematic = controlledByAnim ? true : false;
         helperCnt++;
         if (graphWindow == null)
         {
             canvassObject = GameObject.Find("Canvas");
             graphWindow = canvassObject.transform.Find("GraphWindow").GetComponent<RectTransform>();
+            gc = graphWindow.gameObject.GetComponent<GraphControl>();
         }
     }
 }

@@ -16,6 +16,8 @@ public class GraphControl : MonoBehaviour
     private List<GameObject> gameObjectList;
     private static int numDataPoints = 25;
 
+    private const float EPSILON = 0.00001f;
+
     private void Awake()
     {
         graphContainer = this.gameObject.transform.Find("GraphContainer").GetComponent<RectTransform>();
@@ -41,9 +43,37 @@ public class GraphControl : MonoBehaviour
         return obj;
     }
 
-    //apparently it is much more efficient to adjust existing objects than spawning new gameobjects
+
     public void ShowGraph (List<PointInTime> inputList, GraphOptions option)
     {
+        //time adjustment is still needed
+        //maybe should take into account for the last object as well?
+        List<float> valueList = new List<float>();
+        int interval = Math.Max(1, inputList.Count / numDataPoints);
+        for (int i = 0, j = 0; i < inputList.Count && j < numDataPoints; i += interval, j++)
+        {
+            valueList.Add(inputList[i].getOption(option));
+        }
+        ShowGraph_Helper(valueList, option);
+    }
+
+    //overload
+    public void ShowGraph (List<PointInTime> inputList, GraphOptions option, int maxIndex)
+    {
+        //time adjustment is still needed
+        //maybe should take into account for the last object as well?
+        List<float> valueList = new List<float>();
+        int interval = Math.Max(1, (maxIndex + 1) / numDataPoints);
+        for (int i = 0, j = 0; i <= maxIndex && j < numDataPoints; i += interval, j++)
+        {
+            valueList.Add(inputList[i].getOption(option));
+        }
+        ShowGraph_Helper(valueList, option);
+    }
+
+    //apparently it is much more efficient to adjust existing objects than spawning new gameobjects
+    private void ShowGraph_Helper (List<float> valueList, GraphOptions option)
+    { 
         //for runtime testing
         //System.Diagnostics.Stopwatch stopWatch = new Stopwatch();
         //stopWatch.Start();
@@ -51,20 +81,15 @@ public class GraphControl : MonoBehaviour
         //destroys all previous objects;
 
         //.Debug.Log("Count: " + inputList.Count);
+
+        //destroying objects seem a bit costly, should optimize later
         for (int i = 0; i < gameObjectList.Count; i++)
         {
             Destroy(gameObjectList[i]);
         }
         gameObjectList.Clear();
 
-        //time adjustment is still needed
-        //maybe should take into account for the last object as well?
-        List<float> valueList = new List<float>();
-        int interval = Math.Max(1, inputList.Count / numDataPoints);
-        for (int i = 0; i < inputList.Count; i += interval)
-        {
-            valueList.Add(inputList[i].getOption(option));
-        }
+        if (valueList.Count == 0) return;
 
         //set the new graph
         float graphHeight = graphContainer.rect.height;
@@ -77,6 +102,7 @@ public class GraphControl : MonoBehaviour
             yMin = Mathf.Min(yMin, valueList[i]);
         }
         float range = yMax - yMin;
+        if (Math.Abs(range) < EPSILON) { range = yMax; } //accounts for the case of a horizontal line
         yMax += range * 0.1f;
         yMin -= range * 0.1f;
         range = yMax - yMin;
