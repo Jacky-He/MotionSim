@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 
 public class ReplayControl : MonoBehaviour
 {
-
+    [SerializeField]
+    private string spriteName;
     //replay
     public static bool sliderReplaying = false;
     public static bool resetting = false;
@@ -53,7 +54,10 @@ public class ReplayControl : MonoBehaviour
     void FixedUpdate()
     {
         //this object will be destroyed
-        rb.isKinematic = controlledByAnim ? true : false;
+        if (spriteName != "FixedRectangle" && spriteName != "Spring")
+        {
+            rb.isKinematic = controlledByAnim ? true : false;
+        }
         if (needsClearing) Clear();
         if (resetting) Reset();
         if (sliderReplaying) Adjust();
@@ -177,7 +181,14 @@ public class ReplayControl : MonoBehaviour
         spriteTransform = this.GetComponent<Transform>();
         pointsInTime = new List<PointInTime>();
         this.collider = this.GetComponent<Collider2D>();
-        rb.isKinematic = controlledByAnim ? true : false;
+        if (spriteName != "FixedRectangle" && spriteName != "Spring")
+        {
+            rb.isKinematic = controlledByAnim ? true : false;
+        }
+        else
+        {
+            rb.isKinematic = true;
+        }
         helperCnt++;
         if (graphWindow == null)
         {

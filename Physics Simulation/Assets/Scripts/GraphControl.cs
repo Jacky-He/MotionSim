@@ -103,6 +103,7 @@ public class GraphControl : MonoBehaviour
         }
         float range = yMax - yMin;
         if (Math.Abs(range) < EPSILON) { range = yMax; } //accounts for the case of a horizontal line
+        if (Math.Abs(range) < EPSILON) { range = 10f; } //if yMax happens to be zero
         yMax += range * 0.1f;
         yMin -= range * 0.1f;
         range = yMax - yMin;

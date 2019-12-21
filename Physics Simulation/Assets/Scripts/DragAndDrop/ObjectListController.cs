@@ -8,9 +8,13 @@ using UnityEngine.UI;
 public class ObjectListController : MonoBehaviour
 {
     [SerializeField]
+    private GameObject springTemplate;
+    [SerializeField]
     private GameObject circleTemplate;
     [SerializeField]
     private GameObject fixedRectTemplate;
+    [SerializeField]
+    private GameObject moveableRectTemplate;
     [SerializeField]
     private GameObject scrollContentView;
 
@@ -38,7 +42,6 @@ public class ObjectListController : MonoBehaviour
             obj.SetActive(true);
             obj.GetComponent<ObjectDragHandler>().index = i;
             obj.GetComponent<ObjectDragHandler>().spacing = scrollContentView.GetComponent<VerticalLayoutGroup>().spacing;
-            obj.GetComponent<Image>().color = Random.ColorHSV();
             obj.transform.SetParent(templateList[i].transform.parent, false);
             existingRefs.Add(obj);
         }
@@ -49,6 +52,8 @@ public class ObjectListController : MonoBehaviour
         //Adds the objects into the scrollview
         templateList.Add(circleTemplate);
         templateList.Add(fixedRectTemplate);
+        templateList.Add(moveableRectTemplate);
+        templateList.Add(springTemplate);
     }
 
     // Start is called before the first frame update
@@ -59,6 +64,7 @@ public class ObjectListController : MonoBehaviour
 
     private void Awake()
     {
+
         PopulateList();
         PopulateView();
     }

@@ -9,6 +9,7 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
     private Vector3 touchStart;
     private float zoomMax = 1000;
     private float zoomMin = 40;
+    private GameObject backgroundSprite;
 
     public void OnDrop (PointerEventData eventData)
     {
@@ -51,6 +52,7 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
 
     private void Awake()
     {
+        backgroundSprite = GameObject.Find("Background");
         Input.multiTouchEnabled = true;
         Camera.main.orthographicSize = 257f;
         Camera.main.transform.position = new Vector3(456, 256.5f, -10);
@@ -117,5 +119,7 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
     void Zoom(float increment)
     {
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - increment, zoomMin, zoomMax);
+        float backgroundScale = 1000f / 256.7578f * Camera.main.orthographicSize;
+        backgroundSprite.GetComponent<Transform>().localScale = new Vector3 (backgroundScale, backgroundScale, 0);
     }
 }
