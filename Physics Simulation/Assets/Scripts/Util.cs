@@ -14,6 +14,8 @@ public class Util: MonoBehaviour
     public static bool sliderSelected = false;
     public static bool objectDragged = false;
 
+    public static float MAXFLOAT = 9999.99f;
+
     public static bool OnCanvas (Vector3 screenPos)
     {
         RectTransform scrollViewRect = scrollView.transform as RectTransform;

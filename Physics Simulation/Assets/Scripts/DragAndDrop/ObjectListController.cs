@@ -64,7 +64,6 @@ public class ObjectListController : MonoBehaviour
 
     private void Awake()
     {
-
         PopulateList();
         PopulateView();
     }

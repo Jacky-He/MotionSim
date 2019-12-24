@@ -31,7 +31,7 @@ public class ReplayControl : MonoBehaviour
     private static GraphControl gc = null;
 
     //this is the object that is currently focused;
-    private static GameObject focusedObject;
+    public static GameObject focusedObject;
 
     private GraphOptions graphOption;
 
@@ -56,7 +56,7 @@ public class ReplayControl : MonoBehaviour
         //this object will be destroyed
         if (spriteName != "FixedRectangle" && spriteName != "Spring")
         {
-            rb.isKinematic = controlledByAnim ? true : false;
+            rb.isKinematic = controlledByAnim;
         }
         if (needsClearing) Clear();
         if (resetting) Reset();
@@ -144,33 +144,33 @@ public class ReplayControl : MonoBehaviour
         
     }
 
-    //for dragging objects around
-    private void OnMouseDown()
-    {
-        Util.objectDragged = true;
-        touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        touchStart.z = 0;
-        focusedObject = this.gameObject;
-    }
+    ////for dragging objects around
+    //private void OnMouseDown()
+    //{
+    //    Util.objectDragged = true;
+    //    touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    //    touchStart.z = 0;
+    //    focusedObject = this.gameObject;
+    //}
 
-    private void OnMouseDrag()
-    {
-        Vector3 touch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        touch.z = 0;
-        spriteTransform.position += (touch - touchStart);
-        touchStart = touch;
-    }
+    //private void OnMouseDrag()
+    //{
+    //    Vector3 touch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    //    touch.z = 0;
+    //    spriteTransform.position += (touch - touchStart);
+    //    touchStart = touch;
+    //}
 
-    private void OnMouseUp()
-    {
-        Util.objectDragged = false;
-    }
+    //private void OnMouseUp()
+    //{
+    //    Util.objectDragged = false;
+    //}
 
     //when floating point precision issues start to occur
     private bool outOfBound ()
     {
         Vector3 position = spriteTransform.position;
-        return Mathf.Abs(position.x) > 9999.99 || Mathf.Abs(position.y) > 9999.99;
+        return Mathf.Abs(position.x) > Util.MAXFLOAT || Mathf.Abs(position.y) > Util.MAXFLOAT;
     }
 
     private void Awake()
@@ -183,7 +183,7 @@ public class ReplayControl : MonoBehaviour
         this.collider = this.GetComponent<Collider2D>();
         if (spriteName != "FixedRectangle" && spriteName != "Spring")
         {
-            rb.isKinematic = controlledByAnim ? true : false;
+            rb.isKinematic = controlledByAnim;
         }
         else
         {
@@ -193,7 +193,7 @@ public class ReplayControl : MonoBehaviour
         if (graphWindow == null)
         {
             canvassObject = GameObject.Find("Canvas");
-            graphWindow = canvassObject.transform.Find("GraphWindow").GetComponent<RectTransform>();
+            graphWindow = GameObject.Find("GraphWindow").GetComponent<RectTransform>();
             gc = graphWindow.gameObject.GetComponent<GraphControl>();
         }
     }

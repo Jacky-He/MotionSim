@@ -9,6 +9,12 @@ public class ButtonsControl : MonoBehaviour
     private GameObject stopButton;
     private GameObject replayButton;
     private GameObject clearButton;
+    private GameObject leftBackButton;
+    private GameObject rightBackButton;
+    private GameObject objectsControlArea;
+    private GameObject propertiesControlArea;
+    private Animator objectsControlAreaAnimator;
+    private Animator propertiesControlAreaAnimator;
 
     private static bool initState = false;
 
@@ -83,6 +89,12 @@ public class ButtonsControl : MonoBehaviour
             stopButton = GameObject.Find("StopButton");
             replayButton = GameObject.Find("ReplayButton");
             clearButton = GameObject.Find("ClearButton");
+            leftBackButton = GameObject.Find("LeftBackButton");
+            rightBackButton = GameObject.Find("RightBackButton");
+            objectsControlArea = GameObject.Find("ObjectsControlArea");
+            propertiesControlArea = GameObject.Find("PropertiesControlArea");
+            objectsControlAreaAnimator = objectsControlArea.GetComponent<Animator>();
+            propertiesControlAreaAnimator = propertiesControlArea.GetComponent<Animator>();
         }
     }
 
@@ -95,6 +107,39 @@ public class ButtonsControl : MonoBehaviour
             clearButton.SetActive(false);
             stopButton.SetActive(false);
             initState = true;
+        }
+    }
+
+    //Other Buttons
+    public void OnClickLeftBack()
+    {
+        //animation
+        bool isShowing = objectsControlAreaAnimator.GetBool("isShowing");
+        if (isShowing)
+        {
+            objectsControlAreaAnimator.SetBool("isShowing", false);
+            objectsControlAreaAnimator.SetBool("isHiding", true);
+        }
+        else
+        {
+            objectsControlAreaAnimator.SetBool("isShowing", true);
+            objectsControlAreaAnimator.SetBool("isHiding", false);
+        }
+    }
+
+    public void OnClickRightBack()
+    {
+        //animation
+        bool isShowing = propertiesControlAreaAnimator.GetBool("isShowing");
+        if (isShowing)
+        {
+            propertiesControlAreaAnimator.SetBool("isShowing", false);
+            propertiesControlAreaAnimator.SetBool("isHiding", true);
+        }
+        else
+        {
+            propertiesControlAreaAnimator.SetBool("isShowing", true);
+            propertiesControlAreaAnimator.SetBool("isHiding", false);
         }
     }
 }

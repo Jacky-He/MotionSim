@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6485845993525380300}
   - component: {fileID: 7725395989312331011}
   - component: {fileID: 1084566082}
+  - component: {fileID: 1721164963}
   m_Layer: 0
   m_Name: Circle
   m_TagString: Untagged
@@ -193,7 +194,19 @@ SpringJoint2D:
   m_AutoConfigureConnectedAnchor: 0
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureDistance: 1
+  m_AutoConfigureDistance: 0
   m_Distance: 480.39255
   m_DampingRatio: 0
   m_Frequency: 1
+--- !u!114 &1721164963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4874188498969898350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2acdf61a75b44f2786364ec052b0df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
