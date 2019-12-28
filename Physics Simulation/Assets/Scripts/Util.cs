@@ -13,6 +13,7 @@ public class Util: MonoBehaviour
     private static GameObject scrollView;
     public static bool sliderSelected = false;
     public static bool objectDragged = false;
+    public static float EPSILON = 0.000001f;
 
     public static float MAXFLOAT = 9999.99f;
 

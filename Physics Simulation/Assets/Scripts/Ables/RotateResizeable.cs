@@ -33,7 +33,6 @@ public class RotateResizeable : MonoBehaviour
                 touchStart.z = 0;
                 if (col.bounds.Contains(touchStart))
                 {
-                    Debug.Log("sdfds");
                     onSprite = true;
                     touchStart.z = 0;
                     Util.objectDragged = true;

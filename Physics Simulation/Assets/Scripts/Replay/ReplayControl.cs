@@ -135,36 +135,15 @@ public class ReplayControl : MonoBehaviour
         pointsInTime.Clear();
         helperCnt--;
         if (helperCnt == 0) needsClearing = false;
+        Attachable.tree.Delete(spriteTransform);
         Destroy(this.gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
-
-    ////for dragging objects around
-    //private void OnMouseDown()
-    //{
-    //    Util.objectDragged = true;
-    //    touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    //    touchStart.z = 0;
-    //    focusedObject = this.gameObject;
-    //}
-
-    //private void OnMouseDrag()
-    //{
-    //    Vector3 touch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    //    touch.z = 0;
-    //    spriteTransform.position += (touch - touchStart);
-    //    touchStart = touch;
-    //}
-
-    //private void OnMouseUp()
-    //{
-    //    Util.objectDragged = false;
-    //}
 
     //when floating point precision issues start to occur
     private bool outOfBound ()
