@@ -89,7 +89,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   index: 0
   spacing: 0
-  spritePreFab: {fileID: 4874188498969898350, guid: 8f99541df4c974e0cbcfbba800b518c2,
+  spritePreFab: {fileID: 4061838876547079868, guid: 8f99541df4c974e0cbcfbba800b518c2,
     type: 3}
 --- !u!225 &6621052008461088235
 CanvasGroup:

@@ -23,6 +23,7 @@ public class ButtonsControl : MonoBehaviour
         replayButton.SetActive(false);
         clearButton.SetActive(false);
         playState = !playState;
+        ReplayControl.touchable = false;
         //if not playing anymore, set everything to original position;
         if (!playState)
         {
@@ -62,6 +63,7 @@ public class ButtonsControl : MonoBehaviour
 
     public void OnClickClear()
     {
+        ReplayControl.touchable = true;
         ReplayControl.needsClearing = true;
         replayButton.SetActive(false);
         clearButton.SetActive(false);

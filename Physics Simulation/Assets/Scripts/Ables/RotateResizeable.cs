@@ -25,6 +25,7 @@ public class RotateResizeable : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!(Mathf.Abs(trans.position.z) < Util.EPSILON)) trans.position = new Vector3(trans.position.x, trans.position.y, 0);
         if (Input.GetMouseButtonDown (0))
         {
             if (Input.touchCount == 1)
@@ -77,7 +78,9 @@ public class RotateResizeable : MonoBehaviour
             transform.eulerAngles += new Vector3(0, 0, angledelta);
 
             Vector3 averagePosPrev = (pos2prev + pos1prev) / 2f;
+            averagePosPrev.z = 0;
             Vector3 averagePos = (pos1 + pos2) / 2f;
+            averagePos.z = 0;
 
             transform.position += (averagePos - averagePosPrev);
             lastTouchCnt = 2;

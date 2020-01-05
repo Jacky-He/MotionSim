@@ -13,6 +13,7 @@ public class ReplayControl : MonoBehaviour
     public static bool recording = false;
     public static bool needsClearing = false;
     public static bool replaying = false;
+    public static bool touchable = true;
 
     public static bool controlledByAnim = true;
     public static bool adjustable = true;
@@ -135,7 +136,7 @@ public class ReplayControl : MonoBehaviour
         pointsInTime.Clear();
         helperCnt--;
         if (helperCnt == 0) needsClearing = false;
-        Attachable.tree.Delete(spriteTransform);
+        //Attachable.tree.Delete(spriteTransform);
         Destroy(this.gameObject);
     }
 

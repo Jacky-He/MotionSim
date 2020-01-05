@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 2915318425867098857}
   - component: {fileID: 7699502822395962525}
   - component: {fileID: 5371606981581567681}
-  - component: {fileID: 1578974741635038537}
-  - component: {fileID: 6342647402419844544}
+  - component: {fileID: 3895958036248978242}
+  - component: {fileID: 6222117830986991197}
   m_Layer: 0
   m_Name: MoveableRectangle
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 7496569791045928023}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 375.63467, y: 210.56577, z: -121387.56}
-  m_LocalScale: {x: 800, y: 150, z: 1}
+  m_LocalScale: {x: 400, y: 75, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 353051eaf9ae443c687e0dea583a27b2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -123,14 +123,14 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.31493506}
+    oldSize: {x: 1, y: 0.6298701}
     newSize: {x: 0.5, y: 0.31493506}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 0.32}
+  m_Size: {x: 1, y: 0.62987}
   m_EdgeRadius: 0
 --- !u!114 &5371606981581567681
 MonoBehaviour:
@@ -145,27 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteName: MoveableRectangle
---- !u!231 &1578974741635038537
-SpringJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7496569791045928023}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 1
-  m_ConnectedRigidBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureDistance: 0
-  m_Distance: 430.62668
-  m_DampingRatio: 0
-  m_Frequency: 1
---- !u!114 &6342647402419844544
+--- !u!114 &3895958036248978242
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,6 +154,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 7496569791045928023}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2acdf61a75b44f2786364ec052b0df2, type: 3}
+  m_Script: {fileID: 11500000, guid: f826b7ff172fd43a9ab2f5f022523717, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trans: {fileID: 0}
+  widthMultiplier: 1
+  heightMultiplier: 0.62987
+--- !u!114 &6222117830986991197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7496569791045928023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 642f2eea723cd4d578fc66bf1ce958ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

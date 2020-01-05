@@ -8,36 +8,34 @@ public class SpringControl : MonoBehaviour
     private Collider2D col;
     private Rigidbody2D rb;
 
-    private RectRotatePoint endPoint1; //positive/above
-    private RectRotatePoint endPoint2; //negative/below
+    private RectRotatePoint endPoint1 = null; //positive/above
+    private RectRotatePoint endPoint2 = null; //negative/below
 
-    private Vector3 attachPoint1;
-    private Vector3 attachPoint2;
+    public Vector3 attachPoint1;
+    public Vector3 attachPoint2;
 
-    private SpringJoint2D firstJoint;
-    private SpringJoint2D secondJoint;
+    private SpringJoint2D [] joints = new SpringJoint2D [2];
 
     private Vector3 touchStart;
     private bool onSprite;
 
-    private Vector2 attachPoint;
-    private Transform nearestTrans;
+    private RectRotatePoint tentative1 = null;
+    private RectRotatePoint tentative2 = null;
+
+    private int lastTouchCnt = -1;
+
+    private bool touchAbove;
 
     private static float heightMultiplier = 1f;
 
     private float height { get { return heightMultiplier * trans.localScale.y; }}
 
-    //temporary
-    [SerializeField]
-    private GameObject obj1;
-    [SerializeField]
-    private GameObject obj2;
+    public static float defaultHeight = 300f;
 
     // Start is called before the first frame update
     void Start()
     {
-        setEndPoint1(obj1, new Vector2(0f, 0f));
-        setEndPoint2(obj2, new Vector2(0f, 0f));
+
     }
 
     private void Awake()
@@ -49,175 +47,359 @@ public class SpringControl : MonoBehaviour
 
     void updateConfigurations ()
     {
-        if (endPoint1 != null && endPoint2 != null)
+        if (onSprite) this.setConfig(attachPoint1, attachPoint2);
+        else if (endPoint1 != null && endPoint2 != null)
         {
-            RectRotatePoint.setConfig(trans, endPoint1, endPoint2);
+            attachPoint1 = endPoint1.getWorldPoint();
+            attachPoint2 = endPoint2.getWorldPoint();
+            this.setConfig(attachPoint1, attachPoint2);
         }
         else if (endPoint1 != null)
         {
-            RectRotatePoint.setConfig(trans, endPoint1);
+            Vector3 worldpoint = endPoint1.getWorldPoint();
+            attachPoint2 = worldpoint + attachPoint2 - attachPoint1;
+            attachPoint1 = worldpoint;
+            this.setConfig(attachPoint1, attachPoint2);
         }
         else if (endPoint2 != null)
         {
-            RectRotatePoint.setConfig(trans, endPoint2);
+            Vector3 worldpoint = endPoint2.getWorldPoint();
+            attachPoint1 = worldpoint + attachPoint1 - attachPoint2;
+            attachPoint2 = worldpoint;
+            this.setConfig(attachPoint1, attachPoint2);
         }
+    }
+
+    public void setConfig(Vector3 position1, Vector3 position2)
+    {
+        Vector3 displacement = position1 - position2;
+        Vector3 scale = new Vector3();
+        float angle = Mathf.Abs(displacement.x) < Util.EPSILON ? ((displacement.y > 0) ? 90f : -90f) : Util.GetAngleFromVectorFloat(displacement);
+        scale.z = 0f;
+        scale.x = this.trans.localScale.x;
+        float distance = Vector3.Distance(position2, position1);
+        scale.y = distance / heightMultiplier;
+        this.trans.localScale = scale;
+        Vector3 newpos = (position1 + position2) / 2f;
+        newpos.z = 0;
+        this.trans.position = newpos;
+        float newangle = (angle - 90f + 720f) % 360f;
+        this.trans.localEulerAngles = new Vector3(0f, 0f, newangle);
     }
 
     void disableEndPoint1 ()
     {
-        if (firstJoint != null)
+        if (joints[0] != null)
         {
-            firstJoint.enabled = false;
-            firstJoint = null;
-            if (secondJoint != null)
+            SpringJoint2D temp = joints[0];
+            if (temp != null) Destroy(temp);
+            joints[0] = null;
+            endPoint1 = null;
+            if (joints[1] != null)
             {
-                secondJoint.enabled = false;
+                joints[1].enabled = false;
             }
         }
     }
 
     void disableEndPoint2 ()
     {
-        if (secondJoint != null)
+        if (joints[1] != null)
         {
-            secondJoint.enabled = false;
-            secondJoint = null;
-            if (firstJoint != null)
+            SpringJoint2D temp = joints[1];
+            if (temp != null) Destroy(temp);
+            joints[1] = null;
+            endPoint2 = null;
+            if (joints[0] != null)
             {
-                firstJoint.enabled = false;
+                joints[0].enabled = false;
             }
         }
     }
 
+    //check if attachable
     void setEndPoint1(GameObject go, Vector2 translate)
     {
-        if (endPoint1 != null) endPoint1.gameObject.GetComponent<SpringJoint2D>().enabled = false;
+        if (endPoint1 != null) Destroy(endPoint1.gameObject.GetComponent<SpringJoint2D>());
+        SpringJoint2D joint = go.AddComponent<SpringJoint2D>();
+        joint.enabled = false;
+        joints[0] = joint;
         endPoint1 = new RectRotatePoint(go, translate);
-        SpringJoint2D joint = go.GetComponent<SpringJoint2D>();
-        joint.enabled = true;
-        firstJoint = joint;
+        //sets the anchor on the current object
+        Collider2D tempcol = go.GetComponent<Collider2D>();
+        (float, float) size = (tempcol.bounds.size.x, tempcol.bounds.size.y);
+        Attachable attach = go.GetComponent<Attachable>();
+        joint.anchor = new Vector2 (translate.x / size.Item1 * attach.widthMultiplier, translate.y / size.Item2 * attach.heightMultiplier);
         if (endPoint2 != null)
         {
             joint.connectedBody = endPoint2.gameObject.GetComponent<Rigidbody2D>();
             SpringJoint2D joint2 = endPoint2.gameObject.GetComponent<SpringJoint2D>();
-            joint2.enabled = true;
+            joint2.enabled = false;
+            joint.enabled = true;
             joint2.connectedBody = go.GetComponent<Rigidbody2D>();
-            secondJoint = joint2;
+            joints[1] = joint2;
+            //sets the anchor on the connected object;
+            Collider2D tempcol2 = endPoint2.gameObject.GetComponent<Collider2D>();
+            (float, float) size2 = (tempcol2.bounds.size.x, tempcol2.bounds.size.y);
+            Attachable attach2 = endPoint2.gameObject.GetComponent<Attachable>();
+            joint.connectedAnchor = new Vector2(endPoint2.translate.x / size2.Item1 * attach2.widthMultiplier, endPoint2.translate.y / size2.Item2 * attach2.heightMultiplier);
         }
+        configureJoints();
     }
 
     void setEndPoint2 (GameObject go, Vector2 translate)
     {
-        if (endPoint2 != null)
-        {
-            endPoint2.gameObject.GetComponent<SpringJoint2D>().enabled = false;
-        }
+        if (endPoint2 != null) Destroy(endPoint2.gameObject.GetComponent<SpringJoint2D>());
+        SpringJoint2D joint = go.AddComponent<SpringJoint2D>();
+        joint.enabled = false;
+        joints[1] = joint;
         endPoint2 = new RectRotatePoint(go, translate);
-        SpringJoint2D joint = go.GetComponent<SpringJoint2D>();
-        joint.enabled = true;
-        secondJoint = joint;
+        //sets the anchor on the current object;
+        Collider2D tempcol = go.GetComponent<Collider2D>();
+        (float, float) size = (tempcol.bounds.size.x, tempcol.bounds.size.y);
+        Attachable attach = go.GetComponent<Attachable>();
+        joint.anchor = new Vector2(translate.x / size.Item1 * attach.widthMultiplier, translate.y / size.Item2 * attach.heightMultiplier);
         if (endPoint1 != null)
         {
             joint.connectedBody = endPoint1.gameObject.GetComponent<Rigidbody2D>();
             SpringJoint2D joint2 = endPoint1.gameObject.GetComponent<SpringJoint2D>();
-            joint2.enabled = true;
+            joint2.enabled = false;
+            joint.enabled = true;
             joint2.connectedBody = go.GetComponent<Rigidbody2D>();
-            firstJoint = joint2;
+            joints[0] = joint2;
+            //sets the anchor on the connected object;
+            Collider2D tempcol2 = endPoint1.gameObject.GetComponent<Collider2D>();
+            (float, float) size2 = (tempcol2.bounds.size.x, tempcol2.bounds.size.y);
+            Attachable attach2 = endPoint1.gameObject.GetComponent<Attachable>();
+            joint.connectedAnchor = new Vector2(endPoint1.translate.x / size2.Item1 * attach2.widthMultiplier, endPoint1.translate.y / size2.Item2 * attach2.heightMultiplier);
+        }
+        configureJoints();
+    }
+
+    //do things to configure the joints
+    void configureJoints()
+    {
+        for (int x = 0; x < 2; x++)
+        {
+            SpringJoint2D joint = joints[x];
+            if (joint != null)
+            {
+                joint.autoConfigureConnectedAnchor = false;
+                joint.autoConfigureDistance = false;
+                joint.frequency = 1f;
+                joint.dampingRatio = 0f;
+                joint.distance = 480.3925f;
+                joint.enableCollision = true;
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        CheckTouches();
         updateConfigurations();
-        if (endPoint1 == null || endPoint2 == null)
-        {
-            CheckTouches();
-        }
     }
 
     void CheckTouches()
     {
+        if (!ReplayControl.touchable)
+        {
+            col.enabled = false;
+            return;
+        }
+        col.enabled = true;
         if (Input.GetMouseButtonDown(0))
         {
             if (Input.touchCount == 1)
             {
                 touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 touchStart.z = 0;
+                Debug.Log(col.bounds);
+                Debug.Log(col.enabled);
+                Debug.Log(touchStart);
+                Debug.Log(col.bounds.Contains(touchStart));
                 if (col.bounds.Contains(touchStart))
                 {
                     onSprite = true;
-                    touchStart.z = 0;
                     Util.objectDragged = true;
+                    touchAbove = Above(touchStart);
                 }
             }
         }
         if (Input.touchCount == 1)
         {
             if (!onSprite) return;
+            if (lastTouchCnt == 2) touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (Input.GetMouseButton(0))
             {
                 Vector3 touch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 touch.z = 0;
                 HandleTouch(touch);
-                FindNearest(touch);
+                FindNearest();
             }
             if (Input.GetMouseButtonUp(0))
             {
-                if (onSprite) SnapIn();
+                if (onSprite) UpdateEndPoints(touchStart);
                 onSprite = false;
                 Util.objectDragged = false;
             }
+            lastTouchCnt = 1;
+        }
+        else if (Input.touchCount == 2 && onSprite)
+        {
+            if (endPoint1 != null || endPoint2 != null) return;
+
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
+
+            Vector3 pos1 = Camera.main.ScreenToWorldPoint(touchZero.position);
+            Vector3 pos2 = Camera.main.ScreenToWorldPoint(touchOne.position);
+
+            Vector3 pos1prev = Camera.main.ScreenToWorldPoint(touchZero.position - touchZero.deltaPosition);
+            Vector3 pos2prev = Camera.main.ScreenToWorldPoint(touchOne.position - touchOne.deltaPosition);
+
+            if (touchAbove)
+            {
+                attachPoint1 += pos1 - pos1prev;
+                attachPoint2 += pos2 - pos2prev;
+            }
+            else
+            {
+                attachPoint2 += pos1 - pos1prev;
+                attachPoint1 += pos2 - pos2prev;
+            }
+
+            lastTouchCnt = 2;
         }
     }
 
-    void HandleTouch (Vector3 touch)
-    {
-        if (endPoint1 == null && endPoint2 == null)
-        {
-            trans.position += touch - touchStart;
-            touchStart = touch;
-        }
-        else if (endPoint1 == null)
-        {
-
-        }
-        else if (endPoint2 == null)
-        {
-
-        }
-        else
-        {
-
-        }
-    }
-
-    void SnapIn()
-    {
-        
-    }
-
-    void FindNearest (Vector3 touch)
+    private bool Above(Vector3 touch)
     {
         Vector3 pos = trans.position;
         float angle = trans.eulerAngles.z;
         Vector3 diff = touch - pos;
-        float currangle = diff.x < Util.EPSILON ? (diff.y > 0f ? 90f : -90f) : Util.GetAngleFromVectorFloat(diff);
+        float currangle = Mathf.Abs(diff.x) < Util.EPSILON ? (diff.y > 0f ? 90f : -90f) : Util.GetAngleFromVectorFloat(diff);
         currangle -= angle;
-        currangle = (currangle + 720f)% 360f;
-        if (0 < currangle && currangle < 180) //above
+        currangle = (currangle + 720f) % 360f;
+        return 0 < currangle && currangle < 180;
+    }
+
+    private void Move(Vector3 touch)
+    {
+        attachPoint1 += touch - touchStart;
+        attachPoint2 += touch - touchStart;
+        touchStart = touch;
+    }
+
+    void HandleTouch (Vector3 touch)
+    {
+        if (endPoint1 == null && endPoint2 == null) Move(touch);
+        else if (endPoint1 == null)
         {
-            attachPoint.x = pos.x + height / 2f * Mathf.Cos(Mathf.Deg2Rad * angle);
-            attachPoint.y = pos.y + height / 2f * Mathf.Sin(Mathf.Deg2Rad * angle);
+            if (touchAbove) attachPoint1 = touch;
+            else Move(touch);
         }
-        else //below
+        else if (endPoint2 == null)
         {
-            attachPoint.x = pos.x + height / 2f * Mathf.Cos(Mathf.Deg2Rad * (angle + 180f));
-            attachPoint.y = pos.y + height / 2f * Mathf.Sin(Mathf.Deg2Rad * (angle + 180f));
+            if (touchAbove) Move(touch);
+            else attachPoint2 = touch;
         }
-        nearestTrans = Attachable.tree.NearestNeighbour(attachPoint);
-        if (nearestTrans == null) return;
-        Attachable attach = nearestTrans.gameObject.GetComponent<Attachable>();
-        attach.ShowSelected();
+        else
+        {
+            if (touchAbove) attachPoint1 = touch;
+            else attachPoint2 = touch;
+        }
+    }
+
+    void UpdateEndPoints(Vector3 touch)
+    {
+        if (touchAbove)
+        {
+            if (tentative1 == null) disableEndPoint1();
+            else
+            {
+                GameObject go = tentative1.gameObject;
+                Vector3 worldpoint = go.transform.position + Util.RotateAroundOrigin(tentative1.translate, go.transform.localEulerAngles.z);
+                if (endPoint2 == null) attachPoint2 += worldpoint - attachPoint1;
+                attachPoint1 = worldpoint;
+                setEndPoint1(tentative1.gameObject, tentative1.translate);
+            }
+        }
+        else
+        {
+            if (tentative2 == null) disableEndPoint2();
+            else
+            {
+                GameObject go = tentative2.gameObject;
+                Vector3 worldpoint = go.transform.position + Util.RotateAroundOrigin(tentative2.translate, go.transform.localEulerAngles.z);
+                if (endPoint1 == null) attachPoint1 += worldpoint - attachPoint2;
+                attachPoint2 = worldpoint;
+                setEndPoint2(tentative2.gameObject, tentative2.translate);
+            }
+        }
+        Attachable.focused = null;
+    }
+
+    void FindNearest ()
+    {
+        RaycastHit2D hit;
+        int layerMask = (1 << 0); //default layer
+        if (touchAbove)
+        {
+            hit = Physics2D.Raycast(attachPoint1, trans.TransformDirection(Vector3.up), height/2, layerMask);
+            Debug.DrawRay(attachPoint1, trans.TransformDirection(Vector3.up)*height/2, Color.green);  // draw the debug;
+            if (hit.collider != null)
+            {
+                Transform gotrans = hit.collider.gameObject.GetComponent<Transform>();
+                Vector3 translate = Util.RotateAroundOrigin(new Vector3(hit.point.x, hit.point.y) - gotrans.position, -gotrans.eulerAngles.z);
+                SetTentative1(hit.collider.gameObject, translate);
+            }
+            else DismissTentative1();
+        }
+        else
+        {
+            hit = Physics2D.Raycast(attachPoint2, trans.TransformDirection(Vector3.down), height/2, layerMask);
+            Debug.DrawRay(attachPoint2, trans.TransformDirection(Vector3.down)*height/2, Color.green);
+            if (hit.collider != null)
+            {
+                Transform gotrans = hit.collider.gameObject.GetComponent<Transform>();
+                Vector3 translate = Util.RotateAroundOrigin(new Vector3(hit.point.x, hit.point.y) - gotrans.position, -gotrans.eulerAngles.z);
+                SetTentative2(hit.collider.gameObject, translate);
+            }
+            else DismissTentative2();
+        }
+    }
+
+    void DismissTentative1()
+    {
+        Attachable.focused = null;
+        if (tentative1 == null) return;
+        tentative1 = null;
+    }
+
+    void DismissTentative2 ()
+    {
+        Attachable.focused = null;
+        if (tentative2 == null) return;
+        tentative2 = null;
+    }
+
+    void SetTentative1 (GameObject go, Vector2 translate)
+    {
+        if (tentative2 != null && tentative2.gameObject == go) return;
+        Attachable attach = go.GetComponent<Attachable>();
+        if (attach == null) return;
+        Attachable.focused = attach;
+        tentative1 = new RectRotatePoint(go, translate);
+    }
+
+    void SetTentative2(GameObject go, Vector2 translate)
+    {
+        if (tentative1 != null && tentative1.gameObject == go) return;
+        Attachable attach = go.GetComponent<Attachable>();
+        if (attach == null) return;
+        Attachable.focused = attach;
+        tentative2 = new RectRotatePoint(go, translate);
     }
 }

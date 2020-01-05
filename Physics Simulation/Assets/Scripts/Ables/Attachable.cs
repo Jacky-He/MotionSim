@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Attachable : MonoBehaviour
 {
-    public static KDTree tree = new KDTree(2);
+    //public static KDTree tree = new KDTree(2);
     public Transform trans;
-    public static Attachable selected;
+    public static Attachable focused;
+
+    public float widthMultiplier;
+    public float heightMultiplier;
 
     // Start is called before the first frame update
     void Start()
@@ -16,23 +19,20 @@ public class Attachable : MonoBehaviour
 
     private void Awake()
     {
-        trans = this.GetComponent<Transform>();
-        tree.Insert(trans);
+        //trans = this.GetComponent<Transform>();
+        //tree.Insert(trans);
     }
 
-    // Update is called once per frame
+    //Update is called once per frame
     void Update()
     {
-        tree.Replace(trans);
-        if (selected != this)
-        {
-            HideSelected();
-        }
+        if (focused == this) this.gameObject.GetComponent<SpriteRenderer>().color = Util.shadedColor;
+        else this.gameObject.GetComponent<SpriteRenderer>().color = Util.unshadedColor;
     }
 
-    public void ShowSelected ()
+    public void ShowSelected()
     {
-        selected = this;
+
     }
 
     public void HideSelected ()
