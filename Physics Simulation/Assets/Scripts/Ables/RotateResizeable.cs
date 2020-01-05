@@ -35,15 +35,15 @@ public class RotateResizeable : MonoBehaviour
                 if (col.bounds.Contains(touchStart))
                 {
                     onSprite = true;
+                    PropertiesEditable.focusedObject = this.gameObject;
                     touchStart.z = 0;
                     Util.objectDragged = true;
                     ReplayControl.focusedObject = this.gameObject;
                 }
             }
         }
-        if (Input.touchCount == 1)
+        if (Input.touchCount == 1 && onSprite && PropertiesEditable.focusedObject == this.gameObject)
         {
-            if (!onSprite) return;
             if (lastTouchCnt == 2) touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (Input.GetMouseButton(0))
             {
@@ -60,7 +60,7 @@ public class RotateResizeable : MonoBehaviour
             }
             lastTouchCnt = 1;
         }
-        else if (Input.touchCount == 2 && onSprite)
+        else if (Input.touchCount == 2 && onSprite && PropertiesEditable.focusedObject == this.gameObject)
         {
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);

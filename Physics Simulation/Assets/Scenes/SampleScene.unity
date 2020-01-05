@@ -2818,11 +2818,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Circle
       objectReference: {fileID: 0}
-    - target: {fileID: 4061838876547079868, guid: 8f99541df4c974e0cbcfbba800b518c2,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6149512970386134413, guid: 8f99541df4c974e0cbcfbba800b518c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3083,11 +3078,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MoveableRectangle
       objectReference: {fileID: 0}
-    - target: {fileID: 7496569791045928023, guid: bffe48e12cdfc49b6aa808c48fdbe8fa,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bffe48e12cdfc49b6aa808c48fdbe8fa, type: 3}
 --- !u!1 &1578974741635038536 stripped
@@ -3107,11 +3097,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FixedRectangle
-      objectReference: {fileID: 0}
-    - target: {fileID: 1894149506889658706, guid: c249474a66d8d446794ab2abda9a8742,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7462214054684416510, guid: c249474a66d8d446794ab2abda9a8742,
         type: 3}
@@ -3739,11 +3724,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Spring
-      objectReference: {fileID: 0}
-    - target: {fileID: 4389943187933625272, guid: 9544e657089274304926fac40a6ded39,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9544e657089274304926fac40a6ded39, type: 3}

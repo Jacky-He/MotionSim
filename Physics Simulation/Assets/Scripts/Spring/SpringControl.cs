@@ -222,14 +222,14 @@ public class SpringControl : MonoBehaviour
                 if (col.bounds.Contains(touchStart))
                 {
                     onSprite = true;
+                    PropertiesEditable.focusedObject = this.gameObject;
                     Util.objectDragged = true;
                     touchAbove = Above(touchStart);
                 }
             }
         }
-        if (Input.touchCount == 1)
+        if (Input.touchCount == 1 && onSprite && PropertiesEditable.focusedObject == this.gameObject)
         {
-            if (!onSprite) return;
             if (lastTouchCnt == 2) touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             if (Input.GetMouseButton(0))
             {
@@ -240,13 +240,13 @@ public class SpringControl : MonoBehaviour
             }
             if (Input.GetMouseButtonUp(0))
             {
-                if (onSprite) UpdateEndPoints(touchStart);
+                if (onSprite) UpdateEndPoints();
                 onSprite = false;
                 Util.objectDragged = false;
             }
             lastTouchCnt = 1;
         }
-        else if (Input.touchCount == 2 && onSprite)
+        else if (Input.touchCount == 2 && onSprite && PropertiesEditable.focusedObject == this.gameObject)
         {
             if (endPoint1 != null || endPoint2 != null) return;
 
@@ -312,7 +312,7 @@ public class SpringControl : MonoBehaviour
         }
     }
 
-    void UpdateEndPoints(Vector3 touch)
+    void UpdateEndPoints()
     {
         if (touchAbove)
         {
