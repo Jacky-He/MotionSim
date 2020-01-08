@@ -47,7 +47,7 @@ public class SpringControl : MonoBehaviour
 
     void updateConfigurations ()
     {
-        if (onSprite) this.setConfig(attachPoint1, attachPoint2);
+        if (onSprite && PropertiesEditable.focusedObject == this.gameObject) this.setConfig(attachPoint1, attachPoint2);
         else if (endPoint1 != null && endPoint2 != null)
         {
             attachPoint1 = endPoint1.getWorldPoint();
@@ -71,7 +71,7 @@ public class SpringControl : MonoBehaviour
     }
 
     public void setConfig(Vector3 position1, Vector3 position2)
-    {
+    { 
         Vector3 displacement = position1 - position2;
         Vector3 scale = new Vector3();
         float angle = Mathf.Abs(displacement.x) < Util.EPSILON ? ((displacement.y > 0) ? 90f : -90f) : Util.GetAngleFromVectorFloat(displacement);
@@ -215,10 +215,6 @@ public class SpringControl : MonoBehaviour
             {
                 touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 touchStart.z = 0;
-                Debug.Log(col.bounds);
-                Debug.Log(col.enabled);
-                Debug.Log(touchStart);
-                Debug.Log(col.bounds.Contains(touchStart));
                 if (col.bounds.Contains(touchStart))
                 {
                     onSprite = true;

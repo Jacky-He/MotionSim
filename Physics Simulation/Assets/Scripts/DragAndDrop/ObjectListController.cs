@@ -7,16 +7,12 @@ using UnityEngine.UI;
 
 public class ObjectListController : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject springTemplate;
-    [SerializeField]
-    private GameObject circleTemplate;
-    [SerializeField]
-    private GameObject fixedRectTemplate;
-    [SerializeField]
-    private GameObject moveableRectTemplate;
-    [SerializeField]
-    private GameObject scrollContentView;
+    [SerializeField] private GameObject springTemplate;
+    [SerializeField] private GameObject circleTemplate;
+    [SerializeField] private GameObject fixedRectTemplate;
+    [SerializeField] private GameObject moveableRectTemplate;
+    [SerializeField] private GameObject scrollContentView;
+    [SerializeField] private GameObject forceTemplate;
 
     private List<GameObject> templateList = new List <GameObject> ();
 
@@ -54,6 +50,7 @@ public class ObjectListController : MonoBehaviour
         templateList.Add(fixedRectTemplate);
         templateList.Add(moveableRectTemplate);
         templateList.Add(springTemplate);
+        templateList.Add(forceTemplate);
     }
 
     // Start is called before the first frame update

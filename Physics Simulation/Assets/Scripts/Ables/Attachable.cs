@@ -6,10 +6,13 @@ public class Attachable : MonoBehaviour
 {
     //public static KDTree tree = new KDTree(2);
     public Transform trans;
+    public Rigidbody2D rb;
     public static Attachable focused;
 
     public float widthMultiplier;
     public float heightMultiplier;
+
+    public HashSet<Force> forces = new HashSet<Force>();
 
     // Start is called before the first frame update
     void Start()
@@ -19,8 +22,28 @@ public class Attachable : MonoBehaviour
 
     private void Awake()
     {
-        //trans = this.GetComponent<Transform>();
+        trans = this.GetComponent<Transform>();
+        rb = this.GetComponent<Rigidbody2D>();
         //tree.Insert(trans);
+    }
+
+    private void FixedUpdate()
+    {
+        if (rb.isKinematic) return;
+        foreach (Force force in forces)
+        {
+            rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
+        }
+    }
+
+    public void RemoveForce (Force f)
+    {
+        forces.Remove(f);
+    }
+
+    public void AddForce (Force f)
+    {
+        forces.Add(f);
     }
 
     //Update is called once per frame

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ButtonsControl : MonoBehaviour
 {
@@ -13,8 +14,13 @@ public class ButtonsControl : MonoBehaviour
     private GameObject rightBackButton;
     private GameObject objectsControlArea;
     private GameObject propertiesControlArea;
+    private GameObject gravityButton;
+    private GameObject gravityCheckBox;
     private Animator objectsControlAreaAnimator;
     private Animator propertiesControlAreaAnimator;
+
+    [SerializeField] private Sprite checkedBoxSprite;
+    [SerializeField] private Sprite uncheckedBoxSprite;
 
     private static bool initState = false;
 
@@ -91,6 +97,8 @@ public class ButtonsControl : MonoBehaviour
             stopButton = GameObject.Find("StopButton");
             replayButton = GameObject.Find("ReplayButton");
             clearButton = GameObject.Find("ClearButton");
+            gravityButton = GameObject.Find("GravityButton");
+            gravityCheckBox = gravityButton.transform.Find("Checkbox").gameObject;
             leftBackButton = GameObject.Find("LeftBackButton");
             rightBackButton = GameObject.Find("RightBackButton");
             objectsControlArea = GameObject.Find("ObjectsControlArea");
@@ -143,5 +151,19 @@ public class ButtonsControl : MonoBehaviour
             propertiesControlAreaAnimator.SetBool("isShowing", true);
             propertiesControlAreaAnimator.SetBool("isHiding", false);
         }
+    }
+
+    public void OnClickGravity()
+    {
+        GravityAffectable.gravityPresent = !GravityAffectable.gravityPresent;
+        if (GravityAffectable.gravityPresent)
+        {
+            gravityCheckBox.GetComponent<Image>().sprite = checkedBoxSprite;
+        }
+        else
+        {
+            gravityCheckBox.GetComponent<Image>().sprite = uncheckedBoxSprite;
+        }
+        Debug.Log(GravityAffectable.gravityPresent);
     }
 }
