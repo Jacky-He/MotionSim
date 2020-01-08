@@ -13,6 +13,9 @@ GameObject:
   - component: {fileID: 1283465223023120008}
   - component: {fileID: 4260294361073887400}
   - component: {fileID: 1283465223023120009}
+  - component: {fileID: 357125845367933633}
+  - component: {fileID: 177975242884068424}
+  - component: {fileID: 5662268849938729284}
   m_Layer: 2
   m_Name: Force
   m_TagString: Untagged
@@ -133,5 +136,51 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02aa7b7d4d31d440dacd90cc97a89809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &357125845367933633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2431105151485147043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aba170e927114d54b622b791574ef96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteName: Force
+--- !u!50 &177975242884068424
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2431105151485147043}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &5662268849938729284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2431105151485147043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc130f96a139e42bc833a5a01a078292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

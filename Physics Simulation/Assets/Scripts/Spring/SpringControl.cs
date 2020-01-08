@@ -8,8 +8,18 @@ public class SpringControl : MonoBehaviour
     private Collider2D col;
     private Rigidbody2D rb;
 
-    private RectRotatePoint endPoint1 = null; //positive/above
-    private RectRotatePoint endPoint2 = null; //negative/below
+    private RectRotatePoint _endPoint1;
+    private RectRotatePoint _endPoint2;
+    private RectRotatePoint endPoint1 //positive/above
+    {
+        get { return (_endPoint1 != null && _endPoint1.gameObject == null) ? null : _endPoint1; }
+        set { _endPoint1 = value; }
+    }
+    private RectRotatePoint endPoint2 //negative/below
+    {
+        get { return (_endPoint2 != null && _endPoint2.gameObject == null) ? null : _endPoint2; }
+        set { _endPoint2 = value; }
+    } 
 
     public Vector3 attachPoint1;
     public Vector3 attachPoint2;
@@ -43,6 +53,7 @@ public class SpringControl : MonoBehaviour
         trans = GetComponent<Transform>();
         col = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        rb.isKinematic = true;
     }
 
     void updateConfigurations ()
@@ -68,6 +79,7 @@ public class SpringControl : MonoBehaviour
             attachPoint2 = worldpoint;
             this.setConfig(attachPoint1, attachPoint2);
         }
+        else if (!ReplayControl.touchable) this.gameObject.GetComponent<Destructable>().Destruct();
     }
 
     public void setConfig(Vector3 position1, Vector3 position2)

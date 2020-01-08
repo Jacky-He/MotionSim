@@ -3,7 +3,13 @@ using System.Collections;
 
 public class ForceControl: MonoBehaviour
 {
-    private RectRotatePoint targetPoint;
+
+    private RectRotatePoint _targetPoint;
+    private RectRotatePoint targetPoint
+    {
+        get { return (_targetPoint != null && _targetPoint.gameObject == null) ? null : _targetPoint; }
+        set { _targetPoint = value; }
+    }
     private RectRotatePoint tentative;
     private Force force = new Force ();
 
@@ -192,7 +198,7 @@ public class ForceControl: MonoBehaviour
         }
         else
         {
-            if (targetPoint == null) Destroy(this.gameObject);
+            if (targetPoint == null) this.gameObject.GetComponent<Destructable>().Destruct();
             else
             {
                 this.gameObject.GetComponent<SpriteRenderer>().enabled = false;

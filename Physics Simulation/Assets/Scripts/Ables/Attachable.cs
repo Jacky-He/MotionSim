@@ -29,11 +29,14 @@ public class Attachable : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (rb.isKinematic) return;
-        foreach (Force force in forces)
+        if (!rb.isKinematic)
         {
-            rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
+            foreach (Force force in forces)
+            {
+                rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
+            }
         }
+        if (Util.OutOfBound(this.transform.position)) this.gameObject.GetComponent<Destructable>().Destruct();
     }
 
     public void RemoveForce (Force f)

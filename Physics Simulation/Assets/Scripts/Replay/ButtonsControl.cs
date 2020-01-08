@@ -41,7 +41,6 @@ public class ButtonsControl : MonoBehaviour
         else
         {
             stopButton.SetActive(true);
-            ReplayControl.needsClearing = false;
             ReplayControl.resetting = false;
             ReplayControl.replaying = false;
             ReplayControl.sliderReplaying = false;
@@ -70,7 +69,9 @@ public class ButtonsControl : MonoBehaviour
     public void OnClickClear()
     {
         ReplayControl.touchable = true;
-        ReplayControl.needsClearing = true;
+        //starts Clearing stuff
+        Destructable.ClearAll();
+        //ends Clearing stuff
         replayButton.SetActive(false);
         clearButton.SetActive(false);
         stopButton.SetActive(false);

@@ -31,6 +31,11 @@ public class Util: MonoBehaviour
         return Mathf.Rad2Deg*Mathf.Atan2(v.y, v.x);
     }
 
+    public static bool OutOfBound(Vector3 position)
+    {
+        return Mathf.Abs(position.x) > Util.MAXFLOAT || Mathf.Abs(position.y) > Util.MAXFLOAT;
+    }
+
     public static Vector3 RotateAroundOrigin (Vector2 vector, float angledelta)
     {
         float currangle = Mathf.Abs(vector.x) < Util.EPSILON ? (vector.y > 0f ? 90f : -90f) : GetAngleFromVectorFloat(vector);

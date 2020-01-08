@@ -11,14 +11,13 @@ public class ReplayControl : MonoBehaviour
     public static bool sliderReplaying = false;
     public static bool resetting = false;
     public static bool recording = false;
-    public static bool needsClearing = false;
     public static bool replaying = false;
     public static bool touchable = true;
 
     public static bool controlledByAnim = true;
     public static bool adjustable = true;
 
-    private static int helperCnt = 0;
+    public static int helperCnt = 0;
 
     private int globalIndex = 0;
 
@@ -51,20 +50,17 @@ public class ReplayControl : MonoBehaviour
         
     }
 
-
     void FixedUpdate()
     {
         //this object will be destroyed
-        if (spriteName != "FixedRectangle" && spriteName != "Spring")
+        if (spriteName != "FixedRectangle" && spriteName != "Spring" && spriteName != "Force")
         {
             rb.isKinematic = controlledByAnim;
         }
-        if (needsClearing) Clear();
         if (resetting) Reset();
         if (sliderReplaying) Adjust();
         if (recording) Record();
         if (replaying) Replay();
-        if (this.outOfBound()) Clear();
     }
 
     private void Adjust()
@@ -131,14 +127,7 @@ public class ReplayControl : MonoBehaviour
         }
     }
 
-    private void Clear()
-    {
-        pointsInTime.Clear();
-        helperCnt--;
-        if (helperCnt == 0) needsClearing = false;
-        //Attachable.tree.Delete(spriteTransform);
-        Destroy(this.gameObject);
-    }
+    
 
     // Update is called once per frame
     void Update()
@@ -147,11 +136,7 @@ public class ReplayControl : MonoBehaviour
     }
 
     //when floating point precision issues start to occur
-    private bool outOfBound ()
-    {
-        Vector3 position = spriteTransform.position;
-        return Mathf.Abs(position.x) > Util.MAXFLOAT || Mathf.Abs(position.y) > Util.MAXFLOAT;
-    }
+    
 
     private void Awake()
     {
@@ -161,7 +146,7 @@ public class ReplayControl : MonoBehaviour
         spriteTransform = this.GetComponent<Transform>();
         pointsInTime = new List<PointInTime>();
         this.collider = this.GetComponent<Collider2D>();
-        if (spriteName != "FixedRectangle" && spriteName != "Spring")
+        if (spriteName != "FixedRectangle" && spriteName != "Spring" && spriteName != "Force")
         {
             rb.isKinematic = controlledByAnim;
         }

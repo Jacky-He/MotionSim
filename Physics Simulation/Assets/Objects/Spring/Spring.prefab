@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 4909474404724041714}
   - component: {fileID: 9212459615633269846}
   - component: {fileID: 9212459615633269845}
-  - component: {fileID: 7423077428066265746}
   - component: {fileID: 8479850160832400149}
   - component: {fileID: 3824137701482928986}
+  - component: {fileID: 1651269873868942301}
+  - component: {fileID: 6140990075389468520}
   m_Layer: 2
   m_Name: Spring
   m_TagString: Untagged
@@ -132,19 +133,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 1}
   m_EdgeRadius: 0
---- !u!114 &7423077428066265746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4389943187933625272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aba170e927114d54b622b791574ef96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spriteName: Spring
 --- !u!114 &8479850160832400149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,5 +157,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02aa7b7d4d31d440dacd90cc97a89809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1651269873868942301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4389943187933625272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aba170e927114d54b622b791574ef96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteName: Spring
+--- !u!114 &6140990075389468520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4389943187933625272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc130f96a139e42bc833a5a01a078292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

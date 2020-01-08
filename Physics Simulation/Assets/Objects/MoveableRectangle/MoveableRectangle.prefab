@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6222117830986991197}
   - component: {fileID: 1578974741635038537}
   - component: {fileID: 8792817568452089616}
+  - component: {fileID: 8817079653183311308}
   m_Layer: 0
   m_Name: MoveableRectangle
   m_TagString: Untagged
@@ -160,6 +161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trans: {fileID: 0}
+  rb: {fileID: 0}
   widthMultiplier: 1
   heightMultiplier: 0.62987
 --- !u!114 &6222117830986991197
@@ -196,5 +198,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 020316cb76ae544fe9a7dddd1929e4da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8817079653183311308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7496569791045928023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc130f96a139e42bc833a5a01a078292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
