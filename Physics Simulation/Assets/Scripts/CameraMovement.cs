@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    private float zoomMax = 2000;
-    private float zoomMin = 40;
+    private float zoomMax = 20f;
+    private float zoomMin = 0.4f;
+    private float defaultOrthographicSize = 2.5f;
+    private float defaultBackgroundScale = 20f;
     private GameObject backgroundSprite;
     private Vector3 touchStart;
     private int lastTouchCnt = 0;
@@ -53,8 +55,8 @@ public class CameraMovement : MonoBehaviour
     {
         backgroundSprite = GameObject.Find("GameBackground");
         Input.multiTouchEnabled = true;
-        Camera.main.orthographicSize = 257f;
-        Camera.main.transform.position = new Vector3(456, 256.5f, -10);
+        Camera.main.orthographicSize = defaultOrthographicSize;
+        Camera.main.transform.position = new Vector3(0, 0, -10);
     }
 
     private void UpdateMobile()
@@ -124,7 +126,7 @@ public class CameraMovement : MonoBehaviour
     {
         Camera.main.orthographic = true;
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - increment, zoomMin, zoomMax);
-        float backgroundScale = 1500f / 256.7578f * Camera.main.orthographicSize;
+        float backgroundScale = defaultBackgroundScale / defaultOrthographicSize * Camera.main.orthographicSize;
         backgroundSprite.GetComponent<Transform>().localScale = new Vector3(backgroundScale, backgroundScale, 0);
     }
 }

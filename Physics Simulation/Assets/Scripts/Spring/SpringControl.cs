@@ -40,7 +40,7 @@ public class SpringControl : MonoBehaviour
 
     private float height { get { return heightMultiplier * trans.localScale.y; }}
 
-    public static float defaultHeight = 300f;
+    public static float defaultHeight = 3f;
 
     // Start is called before the first frame update
     void Start()

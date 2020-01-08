@@ -34,6 +34,7 @@ public class Attachable : MonoBehaviour
             foreach (Force force in forces)
             {
                 rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
+                //rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
             }
         }
         if (Util.OutOfBound(this.transform.position)) this.gameObject.GetComponent<Destructable>().Destruct();

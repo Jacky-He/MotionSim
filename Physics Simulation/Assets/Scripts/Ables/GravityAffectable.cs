@@ -16,13 +16,13 @@ public class GravityAffectable : MonoBehaviour
     private void Awake()
     {
         rb = this.gameObject.GetComponent<Rigidbody2D>();
-        rb.gravityScale = gravityPresent ? 100f : 0f;
+        rb.gravityScale = gravityPresent ? 1f : 0f;
     }
 
     private void FixedUpdate()
     {
         //change gravity
-        rb.gravityScale = gravityPresent ? 100f : 0f;
+        rb.gravityScale = gravityPresent ? 1f : 0f;
     }
 
     // Update is called once per frame

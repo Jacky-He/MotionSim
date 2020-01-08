@@ -5,8 +5,7 @@ using UnityEngine.EventSystems;
 
 public class ReplayControl : MonoBehaviour
 {
-    [SerializeField]
-    private string spriteName;
+    [SerializeField] private string spriteName;
     //replay
     public static bool sliderReplaying = false;
     public static bool resetting = false;
@@ -39,7 +38,7 @@ public class ReplayControl : MonoBehaviour
 
     private Transform spriteTransform;
 
-    private Collider2D collider;
+    private Collider2D col;
 
     //for dragging
     private Vector3 touchStart;
@@ -85,10 +84,7 @@ public class ReplayControl : MonoBehaviour
         Vector2 currAcceleration = (rb.velocity - prevVelocity) / Time.fixedDeltaTime;
         prevVelocity = rb.velocity;
         pointsInTime.Add(new PointInTime(this.transform.position, this.transform.rotation, rb.velocity, rb.angularVelocity, currAcceleration));
-        if (focusedObject == this.gameObject)
-        {
-            gc.ShowGraph(pointsInTime, graphOption);
-        }
+        if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOption);
     }
 
     private void Reset()
@@ -141,11 +137,11 @@ public class ReplayControl : MonoBehaviour
     private void Awake()
     {
         //temporary
-        this.graphOption = GraphOptions.velocityY;
+        this.graphOption = GraphOptions.accelerationY;
         rb = this.GetComponent<Rigidbody2D>();
         spriteTransform = this.GetComponent<Transform>();
         pointsInTime = new List<PointInTime>();
-        this.collider = this.GetComponent<Collider2D>();
+        this.col = this.GetComponent<Collider2D>();
         if (spriteName != "FixedRectangle" && spriteName != "Spring" && spriteName != "Force")
         {
             rb.isKinematic = controlledByAnim;

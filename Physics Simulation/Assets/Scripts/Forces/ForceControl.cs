@@ -25,7 +25,7 @@ public class ForceControl: MonoBehaviour
     private bool touchAbove;
 
     private static float heightMultiplier = 1f;
-    public static float defaultHeight = 100f;
+    public static float defaultHeight = 1f;
 
     private float height { get { return heightMultiplier * trans.localScale.y; } }
 

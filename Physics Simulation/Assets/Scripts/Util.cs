@@ -17,25 +17,35 @@ public class Util: MonoBehaviour
 
     public static float MAXFLOAT = 9999.99f;
 
+    //unit conversions
+    public static float MetresToScreenUnits = 1f / 1f; //screenunits/metre
+    public static float ScreenUnitsToMetres = 1f / 1f; //metres/screenunit;
+    public static float GravitationalAcceleration = -9.8f; //-9.8 m/s^2
+
+    //colors for displaying whether an objects is selected or not
     public static Color shadedColor = new Color(189f / 255f, 204f / 255f, 255f / 255f, 1); //light blue
     public static Color unshadedColor = new Color(1, 1, 1, 1); //white
 
+    //checks if the point is on empty spaces
     public static bool OnCanvas (Vector3 screenPos)
     {
         RectTransform scrollViewRect = scrollView.transform as RectTransform;
         return !RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, screenPos) && !sliderSelected && !objectDragged;
     }
 
+    //get the angle based on the vector but does not account for the case where v.x = 0
     public static float GetAngleFromVectorFloat (Vector2 v)
     { 
         return Mathf.Rad2Deg*Mathf.Atan2(v.y, v.x);
     }
 
+    //checks ifs the position of an object is out of bounds
     public static bool OutOfBound(Vector3 position)
     {
         return Mathf.Abs(position.x) > Util.MAXFLOAT || Mathf.Abs(position.y) > Util.MAXFLOAT;
     }
 
+    //rotates a vector around its origin (0, 0) point according to the angledelta. + is counterclockwise and - is clockwise
     public static Vector3 RotateAroundOrigin (Vector2 vector, float angledelta)
     {
         float currangle = Mathf.Abs(vector.x) < Util.EPSILON ? (vector.y > 0f ? 90f : -90f) : GetAngleFromVectorFloat(vector);
