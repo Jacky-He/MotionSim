@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: 1578974741635038537}
   - component: {fileID: 8792817568452089616}
   - component: {fileID: 8817079653183311308}
+  - component: {fileID: 346286967351088054}
+  - component: {fileID: 1731744854386780611}
   m_Layer: 0
   m_Name: MoveableRectangle
   m_TagString: Untagged
@@ -34,7 +36,7 @@ Transform:
   m_GameObject: {fileID: 7496569791045928023}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 375.63467, y: 210.56577, z: -121387.56}
-  m_LocalScale: {x: 4, y: 0.75, z: 1}
+  m_LocalScale: {x: 4, y: 1.587629, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -188,6 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02aa7b7d4d31d440dacd90cc97a89809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
 --- !u!114 &8792817568452089616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,3 +215,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc130f96a139e42bc833a5a01a078292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &346286967351088054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7496569791045928023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875cb125f9bdc4b32a6f0cbb4b9b0cd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1731744854386780611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7496569791045928023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f7f049c1150437d87e7524753ff028, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectname: MoveableRectangle

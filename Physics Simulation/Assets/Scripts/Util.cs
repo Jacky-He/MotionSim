@@ -14,6 +14,15 @@ public class Util: MonoBehaviour
     public static bool sliderSelected = false;
     public static bool objectDragged = false;
     public static float EPSILON = 0.000001f;
+    public static float EPSILON_SMALL = 0.001f;
+
+    public static float FixedRectWidthMultiplier = 1f;
+    public static float FixedRectHeightMultiplier = 0.636595f;
+    public static float MoveableRectWidthMultiplier = 1f;
+    public static float MoveableRectHeightMultiplier = 0.62987f;
+    public static float CircleDiameterMultiplier = 1f;
+
+    public static float WorldToScreenMultiplier = 180f;
 
     public static float MAXFLOAT = 9999.99f;
 

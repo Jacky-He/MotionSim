@@ -98,7 +98,7 @@ public class CameraMovement : MonoBehaviour
                 float currDis = (touchZero.position - touchOne.position).magnitude;
 
                 float diff = currDis - prevDis;
-                Zoom(diff * 0.5f);
+                Zoom(diff * 0.01f);
             }
             lastTouchCnt = 2;
         }
@@ -119,7 +119,7 @@ public class CameraMovement : MonoBehaviour
                 Camera.main.transform.position += touchStart - touch;
             }
         }
-        Zoom(Input.mouseScrollDelta.y);
+        Zoom(Input.mouseScrollDelta.y*0.5f);
     }
 
     void Zoom(float increment)

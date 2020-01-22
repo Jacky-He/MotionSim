@@ -90,6 +90,7 @@ MonoBehaviour:
   index: 0
   spacing: 0
   spritePreFab: {fileID: 0}
+  selfCopy: {fileID: 0}
 --- !u!225 &1880318210
 CanvasGroup:
   m_ObjectHideFlags: 0

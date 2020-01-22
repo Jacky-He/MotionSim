@@ -20,6 +20,9 @@ public class Destructable : MonoBehaviour
     public void Destruct ()
     {
         objects.Remove(this.gameObject);
+        //deletes the generated lines and labels
+        PropertiesEditable temp = this.gameObject.GetComponent<PropertiesEditable>();
+        temp.Destruct();
         Destroy(this.gameObject);
     }
 }

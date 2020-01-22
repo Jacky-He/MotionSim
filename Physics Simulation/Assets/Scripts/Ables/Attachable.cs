@@ -13,6 +13,7 @@ public class Attachable : MonoBehaviour
     public float heightMultiplier;
 
     public HashSet<Force> forces = new HashSet<Force>();
+    public HashSet<Velocity> velocities = new HashSet<Velocity>();
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +49,22 @@ public class Attachable : MonoBehaviour
     public void AddForce (Force f)
     {
         forces.Add(f);
+    }
+
+    public void AddVelocity (Velocity v)
+    { 
+        velocities.Add(v);
+        Vector3 res = Vector3.zero;
+        foreach (Velocity each in velocities) res += each.velocity;
+        rb.velocity = res;
+    }
+
+    public void RemoveVelocity (Velocity v)
+    {
+        velocities.Remove(v);
+        Vector3 res = Vector3.zero;
+        foreach (Velocity each in velocities) res += each.velocity;
+        rb.velocity = res;
     }
 
     //Update is called once per frame

@@ -26,6 +26,7 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
             //Check for spring
             SpringControl spring = newObj.GetComponent<SpringControl>();
             ForceControl force = newObj.GetComponent<ForceControl>();
+            VelocityControl velocity = newObj.GetComponent<VelocityControl>();
             if (spring != null) //if this is a spring
             {
                 spring.attachPoint1 = worldPos + new Vector3(0, SpringControl.defaultHeight / 2f, 0);
@@ -35,6 +36,11 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
             {
                 force.attachPoint1 = worldPos + new Vector3(0, ForceControl.defaultHeight / 2f, 0);
                 force.attachPoint2 = worldPos - new Vector3(0, ForceControl.defaultHeight / 2f, 0);
+            }
+            if (velocity != null)
+            {
+                velocity.attachPoint1 = worldPos + new Vector3(0, VelocityControl.defaultHeight / 2f, 0);
+                velocity.attachPoint2 = worldPos - new Vector3(0, VelocityControl.defaultHeight / 2f, 0);
             }
         }
         //otherwise do nothing;

@@ -187,7 +187,7 @@ public class GraphControl : MonoBehaviour
         rectTransform.anchorMin = new Vector2 (0f, 0f);
         rectTransform.anchorMax = new Vector2(0f, 0f);
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        Vector2 connectionPos = posA + (posB - posA) / 2;
+        Vector2 connectionPos = (posB + posA) / 2;
         float dis = Vector2.Distance(posA, posB);
         rectTransform.sizeDelta = new Vector2(dis, 4f);
         rectTransform.anchoredPosition = connectionPos;

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class ReplayControl : MonoBehaviour
 {
-    [SerializeField] private string spriteName;
+    public string spriteName;
     //replay
     public static bool sliderReplaying = false;
     public static bool resetting = false;

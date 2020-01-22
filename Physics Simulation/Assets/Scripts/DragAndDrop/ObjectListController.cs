@@ -13,6 +13,7 @@ public class ObjectListController : MonoBehaviour
     [SerializeField] private GameObject moveableRectTemplate;
     [SerializeField] private GameObject scrollContentView;
     [SerializeField] private GameObject forceTemplate;
+    [SerializeField] private GameObject velocityTemplate;
 
     private List<GameObject> templateList = new List <GameObject> ();
 
@@ -51,6 +52,7 @@ public class ObjectListController : MonoBehaviour
         templateList.Add(moveableRectTemplate);
         templateList.Add(springTemplate);
         templateList.Add(forceTemplate);
+        templateList.Add(velocityTemplate);
     }
 
     // Start is called before the first frame update
