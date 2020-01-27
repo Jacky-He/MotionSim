@@ -91,15 +91,15 @@ public class PropertiesEditable: MonoBehaviour
         //this needs angle, length and width;
         v3 pos = trans.position;
         pos.z = 0;
-        v3 localpos = Camera.main.WorldToScreenPoint(pos);
+        v3 localpos = Camera.main.WorldToScreenPoint(pos)/this.canvas.localScale.x;
         localpos.z = 0;
 
         //set position and angle
-        dashhorizontal.position = localpos;
+        dashhorizontal.anchoredPosition = localpos;
         dashhorizontal.eulerAngles = v3.zero;
 
         //dashmoving.anchoredPosition = localpos;
-        dashmoving.position = localpos;
+        dashmoving.anchoredPosition = localpos;
         dashmoving.eulerAngles = trans.eulerAngles;
 
         //set width
@@ -140,12 +140,12 @@ public class PropertiesEditable: MonoBehaviour
     {
         this.canvas = go.Find("Canvas").GetComponent<RectTransform>();
 
-        go obj = new go("dot_connection", typeof(Image));
+        go obj = new go("line", typeof(Image));
         obj.transform.SetParent(this.canvas, false);
         obj.GetComponent<Image>().color = new Color(1, 1, 1);
         dashhorizontal = obj.GetComponent<RectTransform>();
         dashhorizontal.anchorMax = dashhorizontal.anchorMin = new v2(0f, 0f);
-        dashhorizontal.pivot = new v2(0f, 0f);
+        dashhorizontal.pivot = new v2(0f, 0.5f);
         dashhorizontal.gameObject.SetActive(false);
         displays.Add(obj);
 
@@ -153,7 +153,7 @@ public class PropertiesEditable: MonoBehaviour
         obj2.transform.SetParent(this.canvas, false);
         obj2.GetComponent<Image>().color = new Color(1, 1, 1);
         dashmoving = obj2.GetComponent<RectTransform>();
-        dashmoving.anchorMax = dashmoving.anchorMin = new v2(0f, 0f);
+        dashmoving.anchorMax = dashmoving.anchorMin = new v2(0f, 0.5f);
         dashmoving.pivot = new v2(0f, 0f);
         dashmoving.gameObject.SetActive(false);
         displays.Add(obj2);

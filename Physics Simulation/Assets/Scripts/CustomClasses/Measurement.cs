@@ -38,7 +38,7 @@ public class Measurement : MonoBehaviour
                 obj.GetComponent<Image>().color = new Color(1, 1, 1);
                 rtm temp = obj.GetComponent<rtm>();
                 temp.anchorMax = temp.anchorMin = new v2(0f, 0f);
-                temp.pivot = new v2(0f, 0f);
+                temp.pivot = new v2(0f, 0.5f);
                 temp.gameObject.SetActive(isActive);
                 rtms[j].Add(temp);
             }
@@ -134,12 +134,6 @@ public class Measurement : MonoBehaviour
         anchor2 = Camera.main.WorldToScreenPoint(anchor2)/this.canvas.localScale.x;
         anchor1.z = 0;
         anchor2.z = 0;
-
-        if (idx == 1)
-        {
-            Debug.Log(anchor1);
-            Debug.Log(anchor2);
-        }
 
         v3 middlepos = (anchor1 + anchor2) / 2f;
         float dis = v3.Distance(anchor1, anchor2);

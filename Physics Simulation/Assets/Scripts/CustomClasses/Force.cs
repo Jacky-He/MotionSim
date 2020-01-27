@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Force
 {
+    public static int sdfd;
     public Vector3 normalizedDirection;
     public float magnitude;
     public ForceMode2D mode;

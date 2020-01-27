@@ -165,6 +165,15 @@ public class ButtonsControl : MonoBehaviour
         {
             gravityCheckBox.GetComponent<Image>().sprite = uncheckedBoxSprite;
         }
-        Debug.Log(GravityAffectable.gravityPresent);
+    }
+
+    public void OnClickGraphTab ()
+    {
+
+    }
+
+    public void OnClickPropertiesTab()
+    {
+
     }
 }

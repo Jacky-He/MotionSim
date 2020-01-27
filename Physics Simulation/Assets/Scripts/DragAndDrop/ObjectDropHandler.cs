@@ -27,6 +27,8 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
             SpringControl spring = newObj.GetComponent<SpringControl>();
             ForceControl force = newObj.GetComponent<ForceControl>();
             VelocityControl velocity = newObj.GetComponent<VelocityControl>();
+            PropertiesEditable edit = newObj.GetComponent<PropertiesEditable>();
+            ReplayControl replay = newObj.GetComponent<ReplayControl>();
             if (spring != null) //if this is a spring
             {
                 spring.attachPoint1 = worldPos + new Vector3(0, SpringControl.defaultHeight / 2f, 0);
@@ -42,6 +44,8 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
                 velocity.attachPoint1 = worldPos + new Vector3(0, VelocityControl.defaultHeight / 2f, 0);
                 velocity.attachPoint2 = worldPos - new Vector3(0, VelocityControl.defaultHeight / 2f, 0);
             }
+            if (edit != null) PropertiesEditable.focusedObject = newObj;
+            if (replay != null) ReplayControl.focusedObject = newObj;
         }
         //otherwise do nothing;
     }

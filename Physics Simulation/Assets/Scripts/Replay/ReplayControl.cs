@@ -18,9 +18,9 @@ public class ReplayControl : MonoBehaviour
 
     public static int helperCnt = 0;
 
-    private int globalIndex = 0;
+    public int globalIndex = 0;
 
-    private List<PointInTime> pointsInTime;
+    public List<PointInTime> pointsInTime;
 
     Vector2 prevVelocity = new Vector2(0f, 0f);
 
@@ -32,7 +32,9 @@ public class ReplayControl : MonoBehaviour
     //this is the object that is currently focused;
     public static GameObject focusedObject;
 
-    private GraphOptions graphOption;
+    public GraphOptions graphOption;
+
+    public HashSet<GraphOptions> graphOptions = new HashSet<GraphOptions>();
 
     private Rigidbody2D rb;
 
@@ -71,10 +73,7 @@ public class ReplayControl : MonoBehaviour
         PointInTime p = pointsInTime[index];
         this.transform.position = p.position;
         this.transform.rotation = p.rotation;
-        if (focusedObject == this.gameObject)
-        {
-            gc.ShowGraph(pointsInTime, graphOption, index);
-        }
+        if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOptions, index);
     }
 
     private void Record ()
@@ -84,7 +83,7 @@ public class ReplayControl : MonoBehaviour
         Vector2 currAcceleration = (rb.velocity - prevVelocity) / Time.fixedDeltaTime;
         prevVelocity = rb.velocity;
         pointsInTime.Add(new PointInTime(this.transform.position, this.transform.rotation, rb.velocity, rb.angularVelocity, currAcceleration));
-        if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOption);
+        if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOptions);
     }
 
     private void Reset()
@@ -100,7 +99,7 @@ public class ReplayControl : MonoBehaviour
         }
         if (focusedObject == this.gameObject)
         {
-            gc.ShowGraph(pointsInTime, graphOption); // this should show an empty graph;
+            gc.ShowGraph(pointsInTime, graphOptions); // this should show an empty graph;
         }
     }
 
@@ -119,7 +118,7 @@ public class ReplayControl : MonoBehaviour
         }
         if (focusedObject == this.gameObject)
         {
-            gc.ShowGraph(this.pointsInTime, graphOption, globalIndex);
+            gc.ShowGraph(this.pointsInTime, graphOptions, globalIndex);
         }
     }
 
@@ -137,7 +136,7 @@ public class ReplayControl : MonoBehaviour
     private void Awake()
     {
         //temporary
-        this.graphOption = GraphOptions.accelerationY;
+        this.graphOption = GraphOptions.velocityX;
         rb = this.GetComponent<Rigidbody2D>();
         spriteTransform = this.GetComponent<Transform>();
         pointsInTime = new List<PointInTime>();
