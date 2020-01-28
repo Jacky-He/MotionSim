@@ -11,6 +11,8 @@ public enum GraphOptions
 public class Util: MonoBehaviour
 {
     private static GameObject scrollView;
+    private static GameObject propertiesControlArea;
+
     public static bool sliderSelected = false;
     public static bool objectDragged = false;
     public static float EPSILON = 0.000001f;
@@ -42,7 +44,8 @@ public class Util: MonoBehaviour
     public static bool OnCanvas (Vector3 screenPos)
     {
         RectTransform scrollViewRect = scrollView.transform as RectTransform;
-        return !RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, screenPos) && !sliderSelected && !objectDragged;
+        RectTransform propConRect = propertiesControlArea.transform as RectTransform;
+        return !RectTransformUtility.RectangleContainsScreenPoint(scrollViewRect, screenPos) && !sliderSelected && !objectDragged && !RectTransformUtility.RectangleContainsScreenPoint(propConRect, screenPos);
     }
 
     //get the angle based on the vector but does not account for the case where v.x = 0
@@ -79,5 +82,6 @@ public class Util: MonoBehaviour
     private void Awake()
     {
         scrollView = GameObject.Find("ObjectsScrollView");
+        propertiesControlArea = GameObject.Find("PropertiesControlArea");
     }
 }
