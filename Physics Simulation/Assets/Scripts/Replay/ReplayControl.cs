@@ -26,8 +26,8 @@ public class ReplayControl : MonoBehaviour
 
     //for graphing
     private static GameObject canvassObject = null;
-    private static RectTransform graphWindow = null;
-    private static GraphControl gc = null;
+    public static RectTransform graphWindow = null;
+    public static GraphControl gc = null;
 
     //this is the object that is currently focused;
     public static GameObject focusedObject;
@@ -141,20 +141,9 @@ public class ReplayControl : MonoBehaviour
         spriteTransform = this.GetComponent<Transform>();
         pointsInTime = new List<PointInTime>();
         this.col = this.GetComponent<Collider2D>();
-        if (spriteName != "FixedRectangle" && spriteName != "Spring" && spriteName != "Force")
-        {
-            rb.isKinematic = controlledByAnim;
-        }
-        else
-        {
-            rb.isKinematic = true;
-        }
+        if (spriteName != "FixedRectangle" && spriteName != "Spring" && spriteName != "Force") rb.isKinematic = controlledByAnim;
+        else rb.isKinematic = true;
         helperCnt++;
-        if (graphWindow == null)
-        {
-            canvassObject = GameObject.Find("Canvas");
-            graphWindow = GameObject.Find("GraphWindow").GetComponent<RectTransform>();
-            gc = graphWindow.gameObject.GetComponent<GraphControl>();
-        }
+        if (canvassObject == null) canvassObject = GameObject.Find("Canvas");
     }
 }

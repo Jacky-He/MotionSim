@@ -43,6 +43,7 @@ public class PropertiesControlAreaScript : MonoBehaviour
     {
         grapharea.SetActive(true);
         propertiesarea.SetActive(false);
+        if (focusedObject == null) { grapharea.SetActive(false); return; }
         ReplayControl rc = focusedObject.GetComponent<ReplayControl>();
         if (rc == null) grapharea.SetActive(false);
     }

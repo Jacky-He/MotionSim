@@ -16,7 +16,9 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
             //this is the object being dropped
             //instantiate a new object in the canvass
             GameObject ui = eventData.pointerDrag;
-            GameObject reference = ui.GetComponent<ObjectDragHandler>().spritePreFab;
+            ObjectDragHandler draghandler = ui.GetComponent<ObjectDragHandler>();
+            if (draghandler == null) return;
+            GameObject reference = draghandler.spritePreFab;
             GameObject newObj = Instantiate(reference) as GameObject;
             newObj.SetActive(true);
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(eventData.position);

@@ -110,13 +110,13 @@ public class PropertiesEditable: MonoBehaviour
         //get angle
         Text t = label.GetComponent<Text>();
         float angle = trans.eulerAngles.z;
-        t.text = angle + "°";
+        t.text = Mathf.Round(angle*100f)/100f + "°";
 
         if (angle > 30f) angle += 15;
         else angle /= 2f;
         v3 direction = new v3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
-        length = 50f;
-        label.position = localpos + direction * length;
+        length = 0f;
+        label.anchoredPosition = localpos + direction * length;
     }
 
     void updateCircle()
@@ -153,8 +153,8 @@ public class PropertiesEditable: MonoBehaviour
         obj2.transform.SetParent(this.canvas, false);
         obj2.GetComponent<Image>().color = new Color(1, 1, 1);
         dashmoving = obj2.GetComponent<RectTransform>();
-        dashmoving.anchorMax = dashmoving.anchorMin = new v2(0f, 0.5f);
-        dashmoving.pivot = new v2(0f, 0f);
+        dashmoving.anchorMax = dashmoving.anchorMin = new v2(0f, 0f);
+        dashmoving.pivot = new v2(0f, 0.5f);
         dashmoving.gameObject.SetActive(false);
         displays.Add(obj2);
 
@@ -166,8 +166,9 @@ public class PropertiesEditable: MonoBehaviour
         label.gameObject.SetActive(false);
         displays.Add(obj3);
         Text t = label.GetComponent<Text>();
+        t.alignment = TextAnchor.MiddleCenter;
         t.color = new Color(1, 1, 1);
-        t.fontSize = 60;
+        t.fontSize = 30;
         t.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
 
         trans = this.gameObject.GetComponent<Transform>();

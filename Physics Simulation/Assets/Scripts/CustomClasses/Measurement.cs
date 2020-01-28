@@ -113,10 +113,10 @@ public class Measurement : MonoBehaviour
         v3 anchor2 = leftmiddle - updir * dimensions.Item2 / 2f;
         this.update((angle + 180f) % 360f, anchor1, anchor2, 1);
         //facing down;
-        v3 downmiddle = pos - updir * dimensions.Item2 / 2f;
-        v3 a = downmiddle + leftdir * dimensions.Item1 / 2f;
-        v3 b = downmiddle - leftdir * dimensions.Item1 / 2f;
-        this.update((angle + 270f) % 360f, a, b, 0);
+        v3 upmiddle = pos + updir * dimensions.Item2 / 2f;
+        v3 a = upmiddle + leftdir * dimensions.Item1 / 2f;
+        v3 b = upmiddle - leftdir * dimensions.Item1 / 2f;
+        this.update((angle + 90f) % 360f, a, b, 0);
     }
 
     private void unshow()

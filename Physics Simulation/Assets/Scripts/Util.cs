@@ -35,6 +35,9 @@ public class Util: MonoBehaviour
     public static Color shadedColor = new Color(189f / 255f, 204f / 255f, 255f / 255f, 1); //light blue
     public static Color unshadedColor = new Color(1, 1, 1, 1); //white
 
+    public static Color [] graphColors = new Color[6] { new Color(75f / 255f, 0, 130 / 255), new Color(0, 0, 1f), new Color(0, 1, 0), new Color(1, 1, 0), new Color(1, 127f / 255, 0), new Color(1, 0, 0) };
+
+
     //checks if the point is on empty spaces
     public static bool OnCanvas (Vector3 screenPos)
     {

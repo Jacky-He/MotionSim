@@ -14,7 +14,7 @@ public class GraphControl : MonoBehaviour
     private RectTransform dashTemplateX;
     private RectTransform dashTemplateY;
 
-    private static int numDataPoints = 100;
+    private static int numDataPoints = 200;
     private static int separatorCountX = 5;
     private static int separatorCountY = 10;
     private float graphHeight;
@@ -44,10 +44,12 @@ public class GraphControl : MonoBehaviour
 
     private IDictionary<GraphOptions, int> lookup = new Dictionary<GraphOptions, int> ();
     private GraphOptions[] lookup2 = new GraphOptions[6] { GraphOptions.accelerationX, GraphOptions.accelerationY, GraphOptions.velocityX, GraphOptions.velocityY, GraphOptions.positionX, GraphOptions.positionY };
-    private Color[] graphColors = new Color[6] { new Color(75f / 255f, 0, 130 / 255), new Color(0, 0, 1f), new Color(0, 1, 0), new Color(1, 1, 0), new Color(1, 127f / 255, 0), new Color(1, 0, 0) };
+    private Color[] graphColors = Util.graphColors;
 
     private void Awake()
     {
+        ReplayControl.graphWindow = this.gameObject.GetComponent<RectTransform>();
+        ReplayControl.gc = this;
         graphContainer = this.gameObject.transform.Find("GraphContainer").GetComponent<RectTransform>();
         labelTemplateX = graphContainer.Find("LabelTemplateX").GetComponent<RectTransform>();
         labelTemplateY = graphContainer.Find("LabelTemplateY").GetComponent<RectTransform>();
@@ -80,7 +82,7 @@ public class GraphControl : MonoBehaviour
                 image.sprite = circleSprite;
                 image.color = graphColors[j];
                 RectTransform rectTransform = obj.GetComponent<RectTransform>();
-                rectTransform.sizeDelta = new Vector2(4f, 4f);
+                rectTransform.sizeDelta = new Vector2(2f, 2f);
                 rectTransform.anchorMax = new Vector2(0f, 0f);
                 rectTransform.anchorMin = new Vector2(0f, 0f);
                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
@@ -191,6 +193,8 @@ public class GraphControl : MonoBehaviour
         this.domain = xMax - xMin;
 
         for (int i = 0; i < 6; i++) ShowGraph_Helper(lists[i], lookup2[i]);
+
+        AdjustTexts();
 
         ////temporary
         //GraphOptions option = GraphOptions.velocityX;
@@ -439,7 +443,6 @@ public class GraphControl : MonoBehaviour
     public void OnClickAccelerationX()
     {
         if (PropertiesControlAreaScript.focusedObject == null) return;
-        UnityEngine.Debug.Log("Sdfds");
         ReplayControl rc = PropertiesControlAreaScript.focusedObject.GetComponent<ReplayControl>();
         if (rc == null) return;
         buttonAccelerationX.SetSelected(!buttonAccelerationX.selected);
