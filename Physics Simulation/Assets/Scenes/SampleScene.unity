@@ -7249,6 +7249,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1283465223023120008, guid: 1037d98b543c54ebd9f6183e0b4547f6,
+        type: 3}
+      propertyPath: propertiesArea
+      value: 
+      objectReference: {fileID: 8658817}
     - target: {fileID: 2431105151485147043, guid: 1037d98b543c54ebd9f6183e0b4547f6,
         type: 3}
       propertyPath: m_Name
@@ -7670,6 +7675,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Velocity
       objectReference: {fileID: 0}
+    - target: {fileID: 4749805403403141911, guid: 8bd811ecba11141c9aa885b2f60c8533,
+        type: 3}
+      propertyPath: propertiesArea
+      value: 
+      objectReference: {fileID: 8658817}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8bd811ecba11141c9aa885b2f60c8533, type: 3}
 --- !u!1 &4749805403403141910 stripped

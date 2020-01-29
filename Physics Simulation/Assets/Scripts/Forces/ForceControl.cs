@@ -27,12 +27,16 @@ public class ForceControl: MonoBehaviour
     private static float heightMultiplier = 1f;
     public static float defaultHeight = 1f;
 
+    private PropertiesAreaScript propertiesAreaScript;
+    public GameObject propertiesArea;
+
     private float height { get { return heightMultiplier * trans.localScale.y; } }
 
     private void Awake()
     {
         trans = this.GetComponent<Transform>();
         col = this.GetComponent<Collider2D>();
+        propertiesAreaScript = propertiesArea.GetComponent<PropertiesAreaScript>();
     }
 
     // Use this for initialization
@@ -195,6 +199,10 @@ public class ForceControl: MonoBehaviour
                 attachPoint2 = worldpoint;
                 this.setConfig(attachPoint1, attachPoint2);
             }
+            else if (PropertiesEditable.focusedObject == this.gameObject)
+            {
+                this.setConfig(attachPoint1, attachPoint2);
+            }
         }
         else
         {
@@ -226,8 +234,22 @@ public class ForceControl: MonoBehaviour
         float newangle = (angle - 90f + 720f) % 360f;
         this.trans.localEulerAngles = new Vector3 (0f, 0f, newangle);
         //configure the forces
+        float prev = force.magnitude;
         force.magnitude = distance * 10f;
         force.normalizedDirection = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
+        if (!(Mathf.Abs(prev - force.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(5);
+    }
+
+    public void setForce (float newtons)
+    {
+        float distance = newtons / 10f;
+        attachPoint1 = attachPoint2 + distance * force.normalizedDirection;
+        //this.trans.localScale = new Vector2(this.trans.localScale.x, distance / heightMultiplier);
+    }
+
+    public float getForce ()
+    {
+        return force.magnitude;
     }
 
     private void setTargetPoint(GameObject go, Vector3 translate)

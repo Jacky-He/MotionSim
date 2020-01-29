@@ -12,7 +12,7 @@ public class PropertiesAreaScript: MonoBehaviour
 
     private const int numProperties = 8;
 
-    private string[] propertiesNames = new string[numProperties] { "Mass (kg)", "Length (m)", "Width (m)", "Diameter (m)", "Spring Constant (N/m)", "Force (N)", "Velocity (m/s)", "Angle (°}" };
+    private string[] propertiesNames = new string[numProperties] { "Mass (kg)", "Length (m)", "Width (m)", "Diameter (m)", "Spring Constant (N/m)", "Force (N)", "Velocity (m/s)", "Angle (°)" };
 
     Text[] labels = new Text[numProperties];
     InputField[] inputFields = new InputField[numProperties];
@@ -56,8 +56,8 @@ public class PropertiesAreaScript: MonoBehaviour
         else if (namecurr == "FixedRectangle") SetNeededProperties((1 << 1) + (1 << 2) + (1 << 7));
         else if (namecurr == "MoveableRectangle") SetNeededProperties(1 + (1 << 1) + (1 << 2) + (1 << 7));
         else if (namecurr == "Circle") SetNeededProperties(1 + (1 << 3));
-        else if (namecurr == "Force") SetNeededProperties((1 << 5));
-        else if (namecurr == "Velocity") SetNeededProperties((1 << 6));
+        else if (namecurr == "Force") SetNeededProperties((1 << 5) + (1 << 7));
+        else if (namecurr == "Velocity") SetNeededProperties((1 << 6) + (1 << 7));
     }
 
     private void SetNeededProperties(int mask)
@@ -119,6 +119,28 @@ public class PropertiesAreaScript: MonoBehaviour
         }
     }
 
+    public void CoerceAdjustValues(int i)
+    {
+        if (i == 5)
+        {
+            (float, float) bounds = (0.01f, 1000f);
+            ForceControl force = focused.GetComponent<ForceControl>();
+            if (force == null) return;
+            float newtons = Mathf.Clamp(force.getForce(), bounds.Item1, bounds.Item2);
+            sliders[i].SetValueWithoutNotify((newtons - bounds.Item1) / bounds.Item2);
+            inputFields[i].SetTextWithoutNotify("" + Mathf.Round(newtons * 100f) / 100f);
+        }
+        else if (i == 6)
+        {
+            (float, float) bounds = (0.01f, 1000f);
+            VelocityControl velocity = focused.GetComponent<VelocityControl>();
+            if (velocity == null) return;
+            float speed = Mathf.Clamp(velocity.getSpeed(), bounds.Item1, bounds.Item2);
+            sliders[i].SetValueWithoutNotify((speed - bounds.Item1) / bounds.Item2);
+            inputFields[i].SetTextWithoutNotify("" + Mathf.Round(speed * 100f) / 100f);
+        }
+    }
+
     private void AdjustValues()
     {
         for (int i = 0, tempmask = currmask; tempmask != 0; i++, tempmask >>= 1)
@@ -154,6 +176,22 @@ public class PropertiesAreaScript: MonoBehaviour
                 float diameter = transcurr.localScale.x;
                 sliders[i].SetValueWithoutNotify((diameter - bounds.Item1) / bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(diameter * 100f) / 100f);
+            }
+            else if (i == 5) //force
+            {
+                (float, float) bounds = (0.01f, 1000f);
+                ForceControl force = focused.GetComponent<ForceControl>();
+                float newtons = Mathf.Clamp(force.getForce(), bounds.Item1, bounds.Item2);
+                sliders[i].SetValueWithoutNotify((newtons - bounds.Item1)/bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(newtons * 100f) / 100f);
+            }
+            else if (i == 6) //velocity
+            {
+                (float, float) bounds = (0.01f, 1000f);
+                VelocityControl velocity = focused.GetComponent<VelocityControl>();
+                float speed = Mathf.Clamp(velocity.getSpeed(), bounds.Item1, bounds.Item2);
+                sliders[i].SetValueWithoutNotify((speed - bounds.Item1) / bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(speed * 100f) / 100f);
             }
             else if (i == 7)
             {
@@ -199,6 +237,21 @@ public class PropertiesAreaScript: MonoBehaviour
             transcurr.localScale = new v2(diameter, diameter);
             inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(diameter * 100f) / 100f);
         }
+        else if (idx == 5) //force
+        {
+            (float, float) bounds = (0.01f, 1000f);
+            float newtons = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
+            ForceControl force = focused.GetComponent<ForceControl>();
+            force.setForce(newtons);
+            //inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(newtons * 100f) / 100f);
+        }
+        else if (idx == 6) //velocity
+        {
+            (float, float) bounds = (0.01f, 1000f);
+            float speed = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
+            VelocityControl velocity = focused.GetComponent<VelocityControl>();
+            velocity.setSpeed(speed);
+        }
         else if (idx == 7)
         {
             (float, float) bounds = (0f, 359f);
@@ -209,7 +262,7 @@ public class PropertiesAreaScript: MonoBehaviour
     }
 
     public void fieldValueChange(int idx)
-    {
+    { 
         float value;
         if (!float.TryParse(inputFields[idx].text, out value)) return;
         if (idx == 0)
@@ -248,6 +301,22 @@ public class PropertiesAreaScript: MonoBehaviour
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1)/bounds.Item2);
             inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
+        else if (idx == 5)
+        {
+            (float, float) bounds = (0.01f, 1000f);
+            value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
+            ForceControl force = focused.GetComponent<ForceControl>();
+            force.setForce(value);
+            //sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
+            //inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+        }
+        else if (idx == 6)
+        {
+            (float, float) bounds = (0.01f, 1000f);
+            value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
+            VelocityControl velocity = focused.GetComponent<VelocityControl>();
+            velocity.setSpeed(value);
+        }
         else if (idx == 7)
         {
             (float, float) bounds = (0f, 359f);
@@ -262,5 +331,4 @@ public class PropertiesAreaScript: MonoBehaviour
     {
 
     }
-
 }

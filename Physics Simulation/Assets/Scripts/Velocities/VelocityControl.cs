@@ -28,12 +28,16 @@ public class VelocityControl: MonoBehaviour
     private static float heightMultiplier = 1f;
     public static float defaultHeight = 1f;
 
+    private PropertiesAreaScript propertiesAreaScript;
+    public GameObject propertiesArea;
+
     private float height { get { return heightMultiplier * trans.localScale.y; } }
 
     private void Awake()
     {
         trans = this.GetComponent<Transform>();
         col = this.GetComponent<Collider2D>();
+        propertiesAreaScript = propertiesArea.GetComponent<PropertiesAreaScript>();
     }
 
     // Use this for initialization
@@ -196,6 +200,7 @@ public class VelocityControl: MonoBehaviour
                 attachPoint2 = worldpoint;
                 this.setConfig(attachPoint1, attachPoint2);
             }
+            else if (PropertiesEditable.focusedObject == this.gameObject) this.setConfig(attachPoint1, attachPoint2);
         }
         else
         {
@@ -227,8 +232,21 @@ public class VelocityControl: MonoBehaviour
         float newangle = (angle - 90f + 720f) % 360f;
         this.trans.localEulerAngles = new Vector3 (0f, 0f, newangle);
         //configure the forces
-        float multiplier = 1.0f;
-        velocity.velocity = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)) * multiplier;
+        float prev = velocity.velocity.magnitude;
+        float speed = distance * 50f;
+        velocity.velocity = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized * speed;
+        if (!(Mathf.Abs(prev - velocity.velocity.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(6);
+    }
+
+    public void setSpeed (float speed)
+    {
+        float distance = speed / 50f;
+        attachPoint1 = attachPoint2 + distance * (velocity.velocity.normalized);
+    }
+
+    public float getSpeed ()
+    {
+        return velocity.velocity.magnitude;
     }
 
     private void setTargetPoint(GameObject go, Vector3 translate)
