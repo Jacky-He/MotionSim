@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class SpringControl : MonoBehaviour
 
     private RectRotatePoint _endPoint1;
     private RectRotatePoint _endPoint2;
+
     private RectRotatePoint endPoint1 //positive/above
     {
         get { return (_endPoint1 != null && _endPoint1.gameObject == null) ? null : _endPoint1; }
@@ -23,6 +25,8 @@ public class SpringControl : MonoBehaviour
 
     public Vector3 attachPoint1;
     public Vector3 attachPoint2;
+
+   // private DistanceJoint2D[] joints = new DistanceJoint2D[2];
 
     private SpringJoint2D [] joints = new SpringJoint2D [2];
 
@@ -65,6 +69,7 @@ public class SpringControl : MonoBehaviour
             attachPoint2 = endPoint2.getWorldPoint();
             this.setConfig(attachPoint1, attachPoint2);
         }
+        else if (!ReplayControl.touchable && joints[0] == null && joints[1] == null) { Debug.Log("sdfd"); this.gameObject.GetComponent<Destructable>().Destruct(); }
         else if (endPoint1 != null)
         {
             Vector3 worldpoint = endPoint1.getWorldPoint();
@@ -200,8 +205,9 @@ public class SpringControl : MonoBehaviour
                 joint.autoConfigureDistance = false;
                 joint.frequency = 1f;
                 joint.dampingRatio = 0f;
-                joint.distance = 480.3925f;
                 joint.enableCollision = true;
+                joint.distance = this.elength;
+                joint.breakForce = Mathf.Infinity;
             }
         }
     }
@@ -410,4 +416,73 @@ public class SpringControl : MonoBehaviour
         Attachable.focused = attach;
         tentative2 = new RectRotatePoint(go, translate);
     }
+
+    private void OnJointBreak2D(Joint2D joint)
+    {
+        Debug.Log(joint.reactionForce);
+
+        if (joint == joints[0] || joint == joints[1])
+        {
+            disableEndPoint1();
+            disableEndPoint2();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (ReplayControl.touchable) return;
+        for (int i = 0; i < 2; i++)
+        {
+            SpringJoint2D joint = joints[i];
+            if (joint != null && joint.enabled)
+            {
+                double x = this.getSpringLength() - this.elength;
+                double k = this.springConstant;
+
+                Vector3 dirup = this.trans.TransformDirection(Vector3.up).normalized;
+                Vector3 dirdown = this.trans.TransformDirection(Vector3.down).normalized;
+
+                Vector2 reactionForce = joint.reactionForce;
+
+                if (endPoint1.gameObject == joint.attachedRigidbody.gameObject)
+                {
+                    joint.attachedRigidbody.AddForce(reactionForce);
+                    joint.connectedBody.AddForce(-1f*reactionForce);
+
+                    joint.attachedRigidbody.AddForce((float)(-k * x) * dirup, ForceMode2D.Force);
+                    joint.connectedBody.AddForce((float)(-k * x) * dirdown, ForceMode2D.Force);
+                }
+                else if (endPoint1.gameObject == joint.connectedBody.gameObject)
+                {
+                    joint.attachedRigidbody.AddForce(reactionForce);
+                    joint.connectedBody.AddForce(-1f*reactionForce);
+
+                    joint.connectedBody.AddForce((float)(-k * x) * dirup, ForceMode2D.Force);
+                    joint.attachedRigidbody.AddForce((float)(-k * x) * dirdown, ForceMode2D.Force);
+                }
+            }
+        }
+    }
+
+    //MARK: Properties Control
+    private float springConstant = 2f; //N/m
+    private float breakforce = 50f; //N
+    private float elength = 4f; //metres
+
+    public void setSpringConstant (float constant) { this.springConstant = constant; }
+    public float getSpringConstant () { return this.springConstant; }
+
+    public double getSpringLength()
+    {
+        Vector3 diff = attachPoint2 - attachPoint1;
+        double xdir = diff.x;
+        double ydir = diff.y;
+        return Math.Sqrt(xdir * xdir + ydir * ydir);
+    }
+
+    public void setBreakForce(float breakforce) { this.breakforce = breakforce; configureJoints(); }
+    public float getBreakForce() { return this.breakforce; }
+    public void setElength(float elength) { this.elength = elength; configureJoints(); }
+    public float getElength () { return this.elength; }
+    public bool available () { return endPoint1 == null && endPoint2 == null;} 
 }

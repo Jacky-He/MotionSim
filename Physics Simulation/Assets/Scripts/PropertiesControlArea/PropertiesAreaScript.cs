@@ -10,9 +10,9 @@ using tm = UnityEngine.Transform;
 public class PropertiesAreaScript: MonoBehaviour
 {
 
-    private const int numProperties = 8;
-
-    private string[] propertiesNames = new string[numProperties] { "Mass (kg)", "Length (m)", "Width (m)", "Diameter (m)", "Spring Constant (N/m)", "Force (N)", "Velocity (m/s)", "Angle (°)" };
+    private const int numProperties = 10;
+    //possible idea: if the force rotates with the objects then you can simulate uniform circular motion;
+    private string[] propertiesNames = new string[numProperties] { "Mass (kg)", "Length (m)", "Width (m)", "Diameter (m)", "Spring Constant (N/m)", "Force (N)", "Velocity (m/s)", "Angle (°)", "Equilibrium Length (m)", "Break Force (N)"};
 
     Text[] labels = new Text[numProperties];
     InputField[] inputFields = new InputField[numProperties];
@@ -25,6 +25,7 @@ public class PropertiesAreaScript: MonoBehaviour
 
     private go canvass;
     private int currmask;
+    private go prevObject;
 
     private Rigidbody2D rbcurr
     {
@@ -58,12 +59,14 @@ public class PropertiesAreaScript: MonoBehaviour
         else if (namecurr == "Circle") SetNeededProperties(1 + (1 << 3));
         else if (namecurr == "Force") SetNeededProperties((1 << 5) + (1 << 7));
         else if (namecurr == "Velocity") SetNeededProperties((1 << 6) + (1 << 7));
+        else if (namecurr == "Spring") SetNeededProperties((1 << 4) + (1 << 8) + (1 << 9));
     }
 
     private void SetNeededProperties(int mask)
     {
-        if (currmask == mask) return;
+        if (currmask == mask && prevObject == this.focused) return;
         currmask = mask;
+        prevObject = this.focused;
         for (int i = 0; i < numProperties; i++)
         {
             labels[i].gameObject.SetActive(false);
@@ -139,6 +142,30 @@ public class PropertiesAreaScript: MonoBehaviour
             sliders[i].SetValueWithoutNotify((speed - bounds.Item1) / bounds.Item2);
             inputFields[i].SetTextWithoutNotify("" + Mathf.Round(speed * 100f) / 100f);
         }
+        else if (i == 7)
+        {
+            (float, float) bounds = (0f, 359f);
+            if (namecurr == "Force")
+            {
+                ForceControl force = focused.GetComponent<ForceControl>();
+                if (force == null) return;
+                float angle = Mathf.Clamp(force.getAngle(), bounds.Item1, bounds.Item2);
+                sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
+            }
+            else if (namecurr == "Velocity")
+            {
+                VelocityControl velocity = focused.GetComponent<VelocityControl>();
+                if (velocity == null) return;
+                float angle = Mathf.Clamp(velocity.getAngle(), bounds.Item1, bounds.Item2);
+                sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
+            }
+        }
+        else if (i == 8) //spring equilibrium length
+        {
+
+        }
     }
 
     private void AdjustValues()
@@ -177,6 +204,14 @@ public class PropertiesAreaScript: MonoBehaviour
                 sliders[i].SetValueWithoutNotify((diameter - bounds.Item1) / bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(diameter * 100f) / 100f);
             }
+            else if (i == 4) //spring constant (N/m)
+            {
+                (float, float) bounds = (0.01f, 100f);
+                SpringControl spring = focused.GetComponent<SpringControl>();
+                float constant = Mathf.Clamp(spring.getSpringConstant(), bounds.Item1, bounds.Item2);
+                sliders[i].SetValueWithoutNotify((constant - bounds.Item1) / bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(constant * 100f) / 100f);
+            }
             else if (i == 5) //force
             {
                 (float, float) bounds = (0.01f, 1000f);
@@ -199,6 +234,24 @@ public class PropertiesAreaScript: MonoBehaviour
                 float angle = transcurr.localEulerAngles.z;
                 sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
+            }
+            else if (i == 8) //equilibrium length
+            {
+                //cannot set this property when spring is attached
+                SpringControl spring = focused.GetComponent<SpringControl>();
+                if (!spring.available()) { this.CoerceAdjustValues(8); return; }
+                (float, float) bounds = (0.01f, 100f);
+                float elength = Mathf.Clamp(spring.getElength(), bounds.Item1, bounds.Item2);
+                sliders[i].SetValueWithoutNotify((elength - bounds.Item1) / bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(elength * 100f) / 100f);
+            }
+            else if (i == 9) //break force (N)
+            {
+                (float, float) bounds = (0f, 100f);
+                SpringControl spring = focused.GetComponent<SpringControl>();
+                float breakforce = Mathf.Clamp(spring.getBreakForce(), bounds.Item1, bounds.Item2);
+                sliders[i].SetValueWithoutNotify((breakforce- bounds.Item1) / bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(breakforce * 100f) / 100f);
             }
         }
     }
@@ -237,6 +290,14 @@ public class PropertiesAreaScript: MonoBehaviour
             transcurr.localScale = new v2(diameter, diameter);
             inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(diameter * 100f) / 100f);
         }
+        else if (idx == 4) //spring constant (N/m)
+        {
+            (float, float) bounds = (0.01f, 100f);
+            SpringControl spring = focused.GetComponent<SpringControl>();
+            float constant = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
+            spring.setSpringConstant(constant);
+            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(constant * 100f) / 100f);
+        }
         else if (idx == 5) //force
         {
             (float, float) bounds = (0.01f, 1000f);
@@ -256,22 +317,46 @@ public class PropertiesAreaScript: MonoBehaviour
         {
             (float, float) bounds = (0f, 359f);
             float angle = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
-            transcurr.localEulerAngles = new v3(0, 0, angle);
-            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
+            if (namecurr == "Force") this.focused.GetComponent<ForceControl>().setAngle(angle);
+            else if (namecurr == "Velocity") this.focused.GetComponent<VelocityControl>().setAngle(angle);
+            else
+            {
+                transcurr.localEulerAngles = new v3(0, 0, angle);
+                inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
+            }
+        }
+        else if (idx == 8) //equilibrium length
+        {
+            (float, float) bounds = (0.01f, 100f);
+            SpringControl spring = focused.GetComponent<SpringControl>();
+            float elength = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
+            spring.setElength(elength);
+            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(elength * 100f) / 100f);
+        }
+        else if (idx == 9) //break force (N)
+        {
+            (float, float) bounds = (0f, 100f);
+            SpringControl spring = focused.GetComponent<SpringControl>();
+            float breakforce = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
+            spring.setBreakForce(breakforce);
+            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(breakforce * 100f) / 100f);
         }
     }
 
     public void fieldValueChange(int idx)
-    { 
+    {
         float value;
-        if (!float.TryParse(inputFields[idx].text, out value)) return;
+        string text = inputFields[idx].text;
+        
+        if (!float.TryParse(text, out value)) { return; }
+
         if (idx == 0)
         {
             (float, float) bounds = (0f, 100f);
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             rbcurr.mass = value;
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1)/bounds.Item2);
-            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value*100f)/100f);
+            if (text == "" || text[text.Length-1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
         else if (idx == 1)
         {
@@ -281,7 +366,7 @@ public class PropertiesAreaScript: MonoBehaviour
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(length / Util.FixedRectWidthMultiplier, transcurr.localScale.y);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(length / Util.MoveableRectWidthMultiplier, transcurr.localScale.y);
             sliders[idx].SetValueWithoutNotify((length - bounds.Item1) / bounds.Item2);
-            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(length * 100f) / 100f);
+            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(length * 100f) / 100f);
         }
         else if (idx == 2)
         {
@@ -291,7 +376,7 @@ public class PropertiesAreaScript: MonoBehaviour
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.FixedRectHeightMultiplier);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.MoveableRectHeightMultiplier);
             sliders[idx].SetValueWithoutNotify((width - bounds.Item1)/bounds.Item2);
-            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(width * 100f) / 100f);
+            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(width * 100f) / 100f);
         }
         else if(idx == 3) //circle
         {
@@ -299,7 +384,16 @@ public class PropertiesAreaScript: MonoBehaviour
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             transcurr.localScale = new v2(value, value);
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1)/bounds.Item2);
-            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+        }
+        else if (idx == 4)
+        {
+            (float, float) bounds = (0.01f, 100f);
+            value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
+            SpringControl spring = focused.GetComponent<SpringControl>();
+            spring.setSpringConstant(value);
+            sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
+            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
         else if (idx == 5)
         {
@@ -321,9 +415,32 @@ public class PropertiesAreaScript: MonoBehaviour
         {
             (float, float) bounds = (0f, 359f);
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
-            transcurr.localEulerAngles = new v3(0, 0, value);
+            if (namecurr == "Force") this.focused.GetComponent<ForceControl>().setAngle(value);
+            else if (namecurr == "Velocity") this.focused.GetComponent<VelocityControl>().setAngle(value);
+            else
+            {
+                transcurr.localEulerAngles = new v3(0, 0, value);
+                sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
+                if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            }
+        }
+        else if (idx == 8) //equilibrium length
+        {
+            (float, float) bounds = (0.01f, 100f);
+            value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
+            SpringControl spring = focused.GetComponent<SpringControl>();
+            spring.setElength(value);
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
-            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+        }
+        else if (idx == 9) //break force (N)
+        {
+            (float, float) bounds = (0f, 100f);
+            SpringControl spring = focused.GetComponent<SpringControl>();
+            value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
+            spring.setBreakForce(value);
+            sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
+            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
     }
 

@@ -71,6 +71,11 @@ public class Measurement : MonoBehaviour
         for (int i = 0; i < 2; i++) foreach (rtm each in rtms[i]) each.gameObject.SetActive(val);
     }
 
+    public void setActive (int i, bool val)
+    {
+        foreach (rtm each in rtms[i]) each.gameObject.SetActive(val);
+    }
+
     private void Awake()
     {
         Initiate();
@@ -104,6 +109,11 @@ public class Measurement : MonoBehaviour
         if (name.objectname == "FixedRectangle") dimensions = (dimensions.Item1 * Util.FixedRectWidthMultiplier, dimensions.Item2 * Util.FixedRectHeightMultiplier);
         else if (name.objectname == "MoveableRectangle") dimensions = (dimensions.Item1 * Util.MoveableRectWidthMultiplier, dimensions.Item2 * Util.MoveableRectHeightMultiplier);
         else if (name.objectname == "Circle") dimensions = (dimensions.Item1 * Util.CircleDiameterMultiplier, dimensions.Item2 * Util.CircleDiameterMultiplier);
+        else if (name.objectname == "Spring")
+        {
+            dimensions = (dimensions.Item1 * Util.SpringWidthMultiplier, dimensions.Item2 * Util.SpringHeightMultiplier);
+            this.setActive(0, false);
+        }
         //facing left; height measurement
         v3 leftdir = new v3(-Mathf.Cos(angle * Mathf.Deg2Rad), -Mathf.Sin(angle * Mathf.Deg2Rad)).normalized;
         v3 leftmiddle = pos + leftdir * dimensions.Item1 / 2f;

@@ -46,8 +46,8 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
                 velocity.attachPoint1 = worldPos + new Vector3(0, VelocityControl.defaultHeight / 2f, 0);
                 velocity.attachPoint2 = worldPos - new Vector3(0, VelocityControl.defaultHeight / 2f, 0);
             }
-            if (edit != null) PropertiesEditable.focusedObject = newObj;
             if (replay != null) ReplayControl.focusedObject = newObj;
+            if (edit != null) PropertiesEditable.focusedObject = newObj;
         }
         //otherwise do nothing;
     }

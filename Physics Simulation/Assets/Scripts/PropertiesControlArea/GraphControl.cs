@@ -14,7 +14,7 @@ public class GraphControl : MonoBehaviour
     private RectTransform dashTemplateX;
     private RectTransform dashTemplateY;
 
-    private static int numDataPoints = 200;
+    private static int numDataPoints = 300;
     private static int separatorCountX = 5;
     private static int separatorCountY = 10;
     private float graphHeight;
@@ -35,8 +35,26 @@ public class GraphControl : MonoBehaviour
     private GraphButtons buttonPositionX;
     private GraphButtons buttonPositionY;
 
-    private RectTransform[,] dataPoints = new RectTransform[6, numDataPoints];
-    private RectTransform[,] dot_connections = new RectTransform[6, numDataPoints - 1];
+    private RectTransform[][] dataPoints = new RectTransform[][]
+    {
+        new RectTransform [numDataPoints],
+        new RectTransform [numDataPoints],
+        new RectTransform [numDataPoints],
+        new RectTransform [numDataPoints],
+        new RectTransform [numDataPoints],
+        new RectTransform [numDataPoints],
+    };
+
+    private RectTransform[][] dot_connections = new RectTransform[][]
+    {
+        new RectTransform [numDataPoints - 1],
+        new RectTransform [numDataPoints - 1],
+        new RectTransform [numDataPoints - 1],
+        new RectTransform [numDataPoints - 1],
+        new RectTransform [numDataPoints - 1],
+        new RectTransform [numDataPoints - 1],
+    };
+
     private RectTransform[] separatorsX = new RectTransform[separatorCountX + 1];
     private RectTransform[] separatorsY = new RectTransform[separatorCountY + 1];
     private Text[] separatorsXText = new Text[separatorCountX + 1];
@@ -87,7 +105,7 @@ public class GraphControl : MonoBehaviour
                 rectTransform.anchorMin = new Vector2(0f, 0f);
                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
                 obj.SetActive(false);
-                dataPoints[j, i] = rectTransform;
+                dataPoints[j][i] = rectTransform;
             }
             for (int i = 0; i < numDataPoints - 1; i++)
             {
@@ -99,7 +117,7 @@ public class GraphControl : MonoBehaviour
                 rectTransform.anchorMax = new Vector2(0f, 0f);
                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
                 obj.SetActive(false);
-                dot_connections[j, i] = rectTransform;
+                dot_connections[j][i] = rectTransform;
             }
         }
         
@@ -161,6 +179,14 @@ public class GraphControl : MonoBehaviour
 
     public void ShowGraph (List<PointInTime> inputList, HashSet <GraphOptions> options)
     {
+        //for runtime testing
+        //System.Diagnostics.Stopwatch stopWatch = new Stopwatch();
+        //stopWatch.Start();
+
+        //destroys all previous objects;
+
+        //UnityEngine.Debug.Log("Count: " + inputList.Count);
+
         yMax = 0f;
         yMin = float.PositiveInfinity;
 
@@ -196,23 +222,19 @@ public class GraphControl : MonoBehaviour
 
         AdjustTexts();
 
-        ////temporary
-        //GraphOptions option = GraphOptions.velocityX;
-        //foreach (GraphOptions go in options) option = go;
-        ////time adjustment is still needed
-        ////maybe should take into account for the last object as well?
-        //List<float> valueList = new List<float>();
-        //int interval = Math.Max(1, inputList.Count / numDataPoints);
-        //for (int i = 0, j = 0; i < inputList.Count && j < numDataPoints; i += interval, j++)
-        //{
-        //    valueList.Add(inputList[i].getOption(option));
-        //}
-        //ShowGraph_Helper(valueList, option);
+        ///Code
+        //stopWatch.Stop();
+        //// Get the elapsed time as a TimeSpan value.
+        //TimeSpan ts = stopWatch.Elapsed;
+        //UnityEngine.Debug.Log(ts.TotalMilliseconds);
     }
 
     //overload
     public void ShowGraph (List<PointInTime> inputList, HashSet <GraphOptions> options, int maxIndex)
     {
+        //System.Diagnostics.Stopwatch stopWatch = new Stopwatch();
+        //stopWatch.Start();
+
         yMax = 0f;
         yMin = float.PositiveInfinity;
 
@@ -247,18 +269,11 @@ public class GraphControl : MonoBehaviour
         for (int i = 0; i < 6; i++) ShowGraph_Helper(lists[i], lookup2[i]);
         AdjustTexts();
 
-        ////temporary
-        //GraphOptions option = GraphOptions.velocityX;
-        //foreach (GraphOptions go in options) option = go;
-        ////time adjustment is still needed
-        ////maybe should take into account for the last object as well?
-        //List<float> valueList = new List<float>();
-        //int interval = Math.Max(1, (maxIndex + 1) / numDataPoints);
-        //for (int i = 0, j = 0; i <= maxIndex && j < numDataPoints; i += interval, j++)
-        //{
-        //    valueList.Add(inputList[i].getOption(option));
-        //}
-        //ShowGraph_Helper(valueList, option);
+        //Code
+        //stopWatch.Stop();
+        //// Get the elapsed time as a TimeSpan value.
+        //TimeSpan ts = stopWatch.Elapsed;
+        //UnityEngine.Debug.Log(ts.TotalMilliseconds);
     }
 
     private void AdjustTexts()
@@ -287,15 +302,15 @@ public class GraphControl : MonoBehaviour
             {
                 float xpos = i * 1f / valueList.Count * graphWidth;
                 float ypos = (valueList[i] - this.yMin) / range * graphHeight;
-                RectTransform curr = dataPoints[idx, i];
+                RectTransform curr = dataPoints[idx][i];
                 AdjustCircle(curr, new Vector2(xpos, ypos));
-                if (prev != null) AdjustDotConnection(dot_connections[idx, i - 1], prev.anchoredPosition, curr.anchoredPosition);
+                if (prev != null) AdjustDotConnection(dot_connections[idx][i - 1], prev.anchoredPosition, curr.anchoredPosition);
                 prev = curr;
             }
             else
             {
-                dataPoints[idx, i].gameObject.SetActive(false);
-                dot_connections[idx, Mathf.Min(numDataPoints - 2, i)].gameObject.SetActive(false);
+                dataPoints[idx][i].gameObject.SetActive(false);
+                dot_connections[idx][Mathf.Min(numDataPoints - 2, i)].gameObject.SetActive(false);
             }
         }
     }

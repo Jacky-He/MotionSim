@@ -30,6 +30,8 @@ public class ForceControl: MonoBehaviour
     private PropertiesAreaScript propertiesAreaScript;
     public GameObject propertiesArea;
 
+    private float prevangle = -1f;
+
     private float height { get { return heightMultiplier * trans.localScale.y; } }
 
     private void Awake()
@@ -234,10 +236,12 @@ public class ForceControl: MonoBehaviour
         float newangle = (angle - 90f + 720f) % 360f;
         this.trans.localEulerAngles = new Vector3 (0f, 0f, newangle);
         //configure the forces
-        float prev = force.magnitude;
+        float prevmagnitude = force.magnitude;
+        float prevangle = 
         force.magnitude = distance * 10f;
         force.normalizedDirection = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
-        if (!(Mathf.Abs(prev - force.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(5);
+        if (!(Mathf.Abs(prevmagnitude - force.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(5);
+        if (!(Mathf.Abs(prevangle - angle) < Util.EPSILON)) { propertiesAreaScript.CoerceAdjustValues(7); prevangle = angle; }
     }
 
     public void setForce (float newtons)
@@ -250,6 +254,21 @@ public class ForceControl: MonoBehaviour
     public float getForce ()
     {
         return force.magnitude;
+    }
+
+    public void setAngle (float angle)
+    {
+        Vector3 displace = attachPoint1 - attachPoint2;
+        float currDistance = displace.magnitude;
+        Vector3 normalized = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
+        attachPoint1 = attachPoint2 + currDistance * normalized;
+    }
+
+    public float getAngle ()
+    {
+        Vector3 displacement = force.normalizedDirection;
+        float angle = Mathf.Abs(displacement.x) < Util.EPSILON ? ((displacement.y > 0) ? 90f : -90f) : Util.GetAngleFromVectorFloat(displacement);
+        return (angle + 720f)% 360f;
     }
 
     private void setTargetPoint(GameObject go, Vector3 translate)

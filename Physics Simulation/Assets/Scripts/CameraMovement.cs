@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    private float zoomMax = 20f;
-    private float zoomMin = 0.4f;
+    private (float, float) zoombounds = (0.4f, 20f);
+    private (float, float) earthYShiftUnadjusted = (-6.3f, -5.3f);
+    private (float, float) earthScaleFactorUnadjusted = (1.2f, 0.8f);
     private float defaultOrthographicSize = 2.5f;
     private float defaultBackgroundScale = 20f;
+    private float defaultEarthScale = 20f;
     private GameObject backgroundSprite;
+    private GameObject earthImage;
     private Vector3 touchStart;
     private int lastTouchCnt = 0;
+
+
 
     // Update is called once per frame
     void Update()
@@ -54,9 +59,19 @@ public class CameraMovement : MonoBehaviour
     private void Awake()
     {
         backgroundSprite = GameObject.Find("GameBackground");
+        earthImage = GameObject.Find("EarthImage");
         Input.multiTouchEnabled = true;
         Camera.main.orthographicSize = defaultOrthographicSize;
         Camera.main.transform.position = new Vector3(0, 0, -10);
+
+        float earthImageScale = defaultEarthScale / defaultOrthographicSize * Camera.main.orthographicSize;
+        float a = (Camera.main.orthographicSize - zoombounds.Item1) / (zoombounds.Item2 - zoombounds.Item1);
+        float b = a * (earthScaleFactorUnadjusted.Item2 - earthScaleFactorUnadjusted.Item1) + earthScaleFactorUnadjusted.Item1;
+        earthImageScale *= b;
+        earthImage.transform.localScale = new Vector3(earthImageScale, earthImageScale, 0);
+
+        float c = a * (earthYShiftUnadjusted.Item2 - earthYShiftUnadjusted.Item1) + earthYShiftUnadjusted.Item1;
+        earthImage.transform.localPosition = new Vector3(0, c / defaultOrthographicSize * Camera.main.orthographicSize, 10);
     }
 
     private void UpdateMobile()
@@ -110,12 +125,14 @@ public class CameraMovement : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            touchStart.z = 0;
         }
         if (Input.GetMouseButton(0))
         {
             if (Util.OnCanvas(Camera.main.WorldToScreenPoint(touchStart)))
             {
                 Vector3 touch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                touch.z = 0;
                 Camera.main.transform.position += touchStart - touch;
             }
         }
@@ -125,8 +142,16 @@ public class CameraMovement : MonoBehaviour
     void Zoom(float increment)
     {
         Camera.main.orthographic = true;
-        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - increment, zoomMin, zoomMax);
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - increment, zoombounds.Item1, zoombounds.Item2);
         float backgroundScale = defaultBackgroundScale / defaultOrthographicSize * Camera.main.orthographicSize;
-        backgroundSprite.GetComponent<Transform>().localScale = new Vector3(backgroundScale, backgroundScale, 0);
+        float earthImageScale = defaultEarthScale / defaultOrthographicSize * Camera.main.orthographicSize;
+        float a = (Camera.main.orthographicSize - zoombounds.Item1) / (zoombounds.Item2 - zoombounds.Item1);
+        float b = a * (earthScaleFactorUnadjusted.Item2 - earthScaleFactorUnadjusted.Item1) + earthScaleFactorUnadjusted.Item1;
+        earthImageScale *= b;
+        backgroundSprite.transform.localScale = new Vector3(backgroundScale, backgroundScale, 0);
+        earthImage.transform.localScale = new Vector3(earthImageScale, earthImageScale, 0);
+        // old earthimage position
+        float c = a * (earthYShiftUnadjusted.Item2 - earthYShiftUnadjusted.Item1) + earthYShiftUnadjusted.Item1;
+        earthImage.transform.localPosition = new Vector3(0, c / defaultOrthographicSize * Camera.main.orthographicSize, 10);
     }
 }

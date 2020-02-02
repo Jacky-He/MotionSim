@@ -28,6 +28,8 @@ public class VelocityControl: MonoBehaviour
     private static float heightMultiplier = 1f;
     public static float defaultHeight = 1f;
 
+    private float prevangle = -1f;
+
     private PropertiesAreaScript propertiesAreaScript;
     public GameObject propertiesArea;
 
@@ -236,6 +238,7 @@ public class VelocityControl: MonoBehaviour
         float speed = distance * 50f;
         velocity.velocity = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized * speed;
         if (!(Mathf.Abs(prev - velocity.velocity.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(6);
+        if (!(Mathf.Abs(prevangle - angle) < Util.EPSILON)) { propertiesAreaScript.CoerceAdjustValues(7); prevangle = angle; }
     }
 
     public void setSpeed (float speed)
@@ -247,6 +250,21 @@ public class VelocityControl: MonoBehaviour
     public float getSpeed ()
     {
         return velocity.velocity.magnitude;
+    }
+
+    public void setAngle(float angle)
+    {
+        Vector3 displace = attachPoint1 - attachPoint2;
+        float currDistance = displace.magnitude;
+        Vector3 normalized = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
+        attachPoint1 = attachPoint2 + currDistance * normalized;
+    }
+
+    public float getAngle()
+    {
+        Vector3 displacement = velocity.velocity.normalized;
+        float angle = Mathf.Abs(displacement.x) < Util.EPSILON ? ((displacement.y > 0) ? 90f : -90f) : Util.GetAngleFromVectorFloat(displacement);
+        return (angle + 720f) % 360f;
     }
 
     private void setTargetPoint(GameObject go, Vector3 translate)

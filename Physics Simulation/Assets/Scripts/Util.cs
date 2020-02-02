@@ -22,6 +22,10 @@ public class Util: MonoBehaviour
     public static float FixedRectHeightMultiplier = 0.636595f;
     public static float MoveableRectWidthMultiplier = 1f;
     public static float MoveableRectHeightMultiplier = 0.62987f;
+    public static float ForceHeightMultiplier = 1f;
+    public static float SpringHeightMultiplier = 1f;
+    public static float SpringWidthMultiplier = 0.2872265f;
+    public static float VelocityHeightMultiplier = 1f;
     public static float CircleDiameterMultiplier = 1f;
 
     public static float WorldToScreenMultiplier = 180f;
@@ -72,6 +76,11 @@ public class Util: MonoBehaviour
         res.x = magnitude * Mathf.Cos(Mathf.Deg2Rad * currangle);
         res.y = magnitude * Mathf.Sin(Mathf.Deg2Rad * currangle);
         return res;
+    }
+
+    public static float AngleBetweenTwoVectors (Vector2 vec1, Vector2 vec2)
+    {
+        return Vector2.SignedAngle(vec1, vec2);
     }
 
     void Update()

@@ -59,17 +59,93 @@ public class PropertiesEditable: MonoBehaviour
 
     void updateSpring()
     {
-        
+        dashhorizontal.gameObject.SetActive(true);
+        dashmoving.gameObject.SetActive(false);
+        label.gameObject.SetActive(true);
+
+        SpringControl spring = this.gameObject.GetComponent<SpringControl>();
+        v3 pos = spring.attachPoint2;
+        pos.z = 0;
+        v3 localpos = Camera.main.WorldToScreenPoint(pos) / this.canvas.localScale.x;
+        localpos.z = 0;
+
+        //set position and angle
+        dashhorizontal.anchoredPosition = localpos;
+        dashhorizontal.eulerAngles = v3.zero;
+
+        float length = trans.localScale.y * Util.SpringHeightMultiplier * Util.WorldToScreenMultiplier;
+        dashhorizontal.sizeDelta = new v2(length, 3f);
+
+        v3 movingdir = (spring.attachPoint1 - spring.attachPoint2);
+        float signedangle = v2.SignedAngle(new v2(100, 0), movingdir);
+
+        Text t = label.GetComponent<Text>();
+        t.text = Mathf.Round(Mathf.Abs(signedangle) * 100f) / 100f + "°";
+
+        signedangle /= 2f;
+        v3 direction = new v3(Mathf.Cos(Mathf.Deg2Rad * signedangle), Mathf.Sin(Mathf.Deg2Rad * signedangle)).normalized;
+        length = 90;
+        label.anchoredPosition = localpos + direction * length;
     }
 
     void updateForce()
     {
+        dashhorizontal.gameObject.SetActive(true);
+        dashmoving.gameObject.SetActive(false);
+        label.gameObject.SetActive(true);
 
+        ForceControl force = this.gameObject.GetComponent<ForceControl>();
+        v3 pos = force.attachPoint2;
+        pos.z = 0;
+        v3 localpos = Camera.main.WorldToScreenPoint(pos) / this.canvas.localScale.x;
+        localpos.z = 0;
+
+        //set position and angle
+        dashhorizontal.anchoredPosition = localpos;
+        dashhorizontal.eulerAngles = v3.zero;
+
+        float length = trans.localScale.y * Util.ForceHeightMultiplier * Util.WorldToScreenMultiplier;
+        dashhorizontal.sizeDelta = new v2(length, 3f);
+
+        Text t = label.GetComponent<Text>();
+        float angle = (trans.eulerAngles.z + 90f)%360f;
+        t.text = Mathf.Round(angle * 100f) / 100f + "°";
+
+        if (angle < 40f) angle += 15;
+        else angle /= 2f;
+        v3 direction = new v3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
+        length = 90f;
+        label.anchoredPosition = localpos + direction * length;
     }
 
     void updateVelocity()
     {
+        dashhorizontal.gameObject.SetActive(true);
+        dashmoving.gameObject.SetActive(false);
+        label.gameObject.SetActive(true);
 
+        VelocityControl force = this.gameObject.GetComponent<VelocityControl>();
+        v3 pos = force.attachPoint2;
+        pos.z = 0;
+        v3 localpos = Camera.main.WorldToScreenPoint(pos) / this.canvas.localScale.x;
+        localpos.z = 0;
+
+        //set position and angle
+        dashhorizontal.anchoredPosition = localpos;
+        dashhorizontal.eulerAngles = v3.zero;
+
+        float length = trans.localScale.y * Util.VelocityHeightMultiplier * Util.WorldToScreenMultiplier / 2f;
+        dashhorizontal.sizeDelta = new v2(length, 3f);
+
+        Text t = label.GetComponent<Text>();
+        float angle = (trans.eulerAngles.z + 90f) % 360f;
+        t.text = Mathf.Round(angle * 100f) / 100f + "°";
+
+        if (angle < 40f) angle += 15;
+        else angle /= 2f;
+        v3 direction = new v3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
+        length = 90f;
+        label.anchoredPosition = localpos + direction * length;
     }
 
     void updateMoveableRectangle()
@@ -103,7 +179,7 @@ public class PropertiesEditable: MonoBehaviour
         dashmoving.eulerAngles = trans.eulerAngles;
 
         //set width
-        float length = trans.localScale.x * Util.FixedRectWidthMultiplier * Util.WorldToScreenMultiplier / 2f;
+        float length = trans.localScale.x * Util.FixedRectWidthMultiplier * Util.WorldToScreenMultiplier;
         dashmoving.sizeDelta = dashhorizontal.sizeDelta = new v2(length, 3f);
 
         //set the label
@@ -112,11 +188,11 @@ public class PropertiesEditable: MonoBehaviour
         float angle = trans.eulerAngles.z;
         t.text = Mathf.Round(angle*100f)/100f + "°";
 
-        if (angle > 30f) angle += 15;
+        if (angle < 40f) angle += 15;
         else angle /= 2f;
         v3 direction = new v3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
-        length = 0f;
-        label.anchoredPosition = localpos + direction * length;
+        length = 90f;
+        label.anchoredPosition = localpos + direction*length;
     }
 
     void updateCircle()
@@ -162,7 +238,7 @@ public class PropertiesEditable: MonoBehaviour
         obj3.transform.SetParent(this.canvas, false);
         label = obj3.GetComponent<RectTransform>();
         label.anchorMin = label.anchorMax = new v2(0f, 0f);
-        label.pivot = new v2(0f, 0f);
+        label.pivot = new v2(0.5f, 0.5f);
         label.gameObject.SetActive(false);
         displays.Add(obj3);
         Text t = label.GetComponent<Text>();
