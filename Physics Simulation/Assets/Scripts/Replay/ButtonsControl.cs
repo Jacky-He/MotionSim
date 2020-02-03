@@ -19,6 +19,8 @@ public class ButtonsControl : MonoBehaviour
     private Animator objectsControlAreaAnimator;
     private Animator propertiesControlAreaAnimator;
 
+    private GameObject earthImage;
+
     [SerializeField] private Sprite checkedBoxSprite;
     [SerializeField] private Sprite uncheckedBoxSprite;
 
@@ -106,6 +108,7 @@ public class ButtonsControl : MonoBehaviour
             propertiesControlArea = GameObject.Find("PropertiesControlArea");
             objectsControlAreaAnimator = objectsControlArea.GetComponent<Animator>();
             propertiesControlAreaAnimator = propertiesControlArea.GetComponent<Animator>();
+            earthImage = GameObject.Find("EarthImage");
         }
     }
 
@@ -130,11 +133,13 @@ public class ButtonsControl : MonoBehaviour
         {
             objectsControlAreaAnimator.SetBool("isShowing", false);
             objectsControlAreaAnimator.SetBool("isHiding", true);
+            leftBackButton.GetComponent<Image>().color = Util.LeftBackOffColor;
         }
         else
         {
             objectsControlAreaAnimator.SetBool("isShowing", true);
             objectsControlAreaAnimator.SetBool("isHiding", false);
+            leftBackButton.GetComponent<Image>().color = Util.LeftBackOnColor;
         }
     }
 
@@ -146,11 +151,13 @@ public class ButtonsControl : MonoBehaviour
         {
             propertiesControlAreaAnimator.SetBool("isShowing", false);
             propertiesControlAreaAnimator.SetBool("isHiding", true);
+            rightBackButton.GetComponent<Image>().color = Util.RightBackOffColor;
         }
         else
         {
             propertiesControlAreaAnimator.SetBool("isShowing", true);
             propertiesControlAreaAnimator.SetBool("isHiding", false);
+            rightBackButton.GetComponent<Image>().color = Util.RightBackOnColor;
         }
     }
 
@@ -160,10 +167,12 @@ public class ButtonsControl : MonoBehaviour
         if (GravityAffectable.gravityPresent)
         {
             gravityCheckBox.GetComponent<Image>().sprite = checkedBoxSprite;
+            earthImage.SetActive(true);
         }
         else
         {
             gravityCheckBox.GetComponent<Image>().sprite = uncheckedBoxSprite;
+            earthImage.SetActive(false);
         }
     }
 

@@ -15,7 +15,7 @@ public class Util: MonoBehaviour
 
     public static bool sliderSelected = false;
     public static bool objectDragged = false;
-    public static float EPSILON = 0.000001f;
+    public static float EPSILON = 0.00001f;
     public static float EPSILON_SMALL = 0.001f;
 
     public static float FixedRectWidthMultiplier = 1f;
@@ -41,8 +41,24 @@ public class Util: MonoBehaviour
     public static Color shadedColor = new Color(189f / 255f, 204f / 255f, 255f / 255f, 1); //light blue
     public static Color unshadedColor = new Color(1, 1, 1, 1); //white
 
-    public static Color [] graphColors = new Color[6] { new Color(75f / 255f, 0, 130 / 255), new Color(0, 0, 1f), new Color(0, 1, 0), new Color(1, 1, 0), new Color(1, 127f / 255, 0), new Color(1, 0, 0) };
+    public static Color[] graphColors = new Color[6] { new Color(138f / 255f, 255f / 255f, 66f / 255), new Color(11f / 255f, 200f / 255f, 0f / 255f), new Color(123 / 255f, 222 / 255f, 243 / 255f), new Color(81 / 255f, 135 / 255f, 250 / 255f), new Color(255f / 255f, 205f / 255f, 119f / 255f), new Color(255f / 255f, 143f / 255f, 0f / 255f) };
 
+    public static Color RightBackOffColor = new Color(255f / 255f, 142f / 255f, 76f / 255f, 0.5f);
+    public static Color RightBackOnColor = new Color(255f / 255f, 142f / 255f, 76f / 255f, 1);
+
+    public static Color LeftBackOffColor = new Color(255f / 255f, 142f / 255f, 76f / 255f, 0.5f);
+    public static Color LeftBackOnColor = new Color(255f / 255f, 142f / 255f, 76f / 255f, 1);
+
+    public static Color GraphTabOnColor = new Color(135f / 255f, 157f / 255f, 190f / 255f, 107f / 255f);
+    public static Color GraphTabOffColor = new Color(120f / 255f, 120f / 255f, 120f / 255f, 80f / 255f);
+
+    public static Color PropertiesTabOnColor = new Color(135f / 255f, 157f / 255f, 190f / 255f, 107f / 255f);
+    public static Color PropertiesTabOffColor = new Color(120f / 255f, 120f / 255f, 120f / 255f, 80f / 255f);
+
+    public static Font Caladea_Regular;
+    public static Font Caladea_Bold;
+    public static Font Caladea_Italic;
+    public static Font Caladea_BoldItalic;
 
     //checks if the point is on empty spaces
     public static bool OnCanvas (Vector3 screenPos)
@@ -92,5 +108,9 @@ public class Util: MonoBehaviour
     {
         scrollView = GameObject.Find("ObjectsScrollView");
         propertiesControlArea = GameObject.Find("PropertiesControlArea");
+        Caladea_Regular = (Font)Resources.Load("Fonts/caladea/Caladea-Regular");
+        Caladea_Bold = (Font)Resources.Load("Fonts/caladea/Caladea-Bold");
+        Caladea_Italic = (Font)Resources.Load("Fonts/caladea/Caladea-Italic");
+        Caladea_BoldItalic = (Font)Resources.Load("Fonts/caladea/Caladea-BoldItalic");
     }
 }

@@ -101,7 +101,7 @@ public class PropertiesAreaScript: MonoBehaviour
             obj1.SetActive(false);
             obj1.transform.SetParent(scrollContent.transform, false);
             Text text = obj1.GetComponent<Text>();
-            text.color = Color.black;
+            text.color = Color.white;
             text.text = propertiesNames[i];
             labels[i] = text;
 

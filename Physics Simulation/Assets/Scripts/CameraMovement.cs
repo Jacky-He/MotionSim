@@ -15,8 +15,6 @@ public class CameraMovement : MonoBehaviour
     private Vector3 touchStart;
     private int lastTouchCnt = 0;
 
-
-
     // Update is called once per frame
     void Update()
     {
@@ -71,7 +69,7 @@ public class CameraMovement : MonoBehaviour
         earthImage.transform.localScale = new Vector3(earthImageScale, earthImageScale, 0);
 
         float c = a * (earthYShiftUnadjusted.Item2 - earthYShiftUnadjusted.Item1) + earthYShiftUnadjusted.Item1;
-        earthImage.transform.localPosition = new Vector3(0, c / defaultOrthographicSize * Camera.main.orthographicSize, 10);
+        earthImage.transform.localPosition = new Vector3(0, c / defaultOrthographicSize * Camera.main.orthographicSize, 11);
     }
 
     private void UpdateMobile()
@@ -152,6 +150,6 @@ public class CameraMovement : MonoBehaviour
         earthImage.transform.localScale = new Vector3(earthImageScale, earthImageScale, 0);
         // old earthimage position
         float c = a * (earthYShiftUnadjusted.Item2 - earthYShiftUnadjusted.Item1) + earthYShiftUnadjusted.Item1;
-        earthImage.transform.localPosition = new Vector3(0, c / defaultOrthographicSize * Camera.main.orthographicSize, 10);
+        earthImage.transform.localPosition = new Vector3(0, c / defaultOrthographicSize * Camera.main.orthographicSize, 11);
     }
 }

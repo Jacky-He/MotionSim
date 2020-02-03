@@ -21,12 +21,10 @@ public class GraphControl : MonoBehaviour
     private float graphWidth;
     private float range;
     private float domain;
-    private float yMax = 0f;
+    private float yMax = float.NegativeInfinity;
     private float yMin = float.PositiveInfinity;
     private float xMax = 0f;
     private float xMin = 0f;
-
-    private const float EPSILON = 0.00001f;
 
     private GraphButtons buttonAccelerationX;
     private GraphButtons buttonAccelerationY;
@@ -131,6 +129,7 @@ public class GraphControl : MonoBehaviour
             labelX.anchoredPosition = new Vector2(normalizedValue * graphWidth, -20f);
             Text text = labelX.GetComponent<Text>();
             text.alignment = TextAnchor.MiddleCenter;
+            text.font = Util.Caladea_Bold;
             separatorsXText[i] = text;
 
             RectTransform dashY = Instantiate(dashTemplateY);
@@ -149,7 +148,8 @@ public class GraphControl : MonoBehaviour
             labelY.gameObject.SetActive(true);
             labelY.anchoredPosition = new Vector2(-20f, normalizedValue * graphHeight);
             Text text = labelY.GetComponent<Text>();
-            text.alignment = TextAnchor.MiddleCenter;
+            text.alignment = TextAnchor.MiddleRight;
+            text.font = Util.Caladea_Bold;
             separatorsYText[i] = text;
 
             RectTransform dashX = Instantiate(dashTemplateX);
@@ -187,7 +187,7 @@ public class GraphControl : MonoBehaviour
 
         //UnityEngine.Debug.Log("Count: " + inputList.Count);
 
-        yMax = 0f;
+        yMax = float.NegativeInfinity;
         yMin = float.PositiveInfinity;
 
         List<float>[] lists = new List<float>[6];
@@ -207,13 +207,13 @@ public class GraphControl : MonoBehaviour
         }
 
         this.range = yMax - yMin;
-        if (Math.Abs(range) < Util.EPSILON) { this.range = yMax; } //accounts for the case of a horizontal line
-        if (Math.Abs(range) < Util.EPSILON) { this.range = 10f; } //if yMax happens to be zero
+        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = yMax; } //accounts for the case of a horizontal line
+        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = 10f; } //if yMax happens to be zero
         yMax += this.range * 0.1f;
         yMin -= this.range * 0.1f;
         this.range = yMax - yMin;
 
-        float timestep = Time.fixedDeltaTime * 1000; //later can be changed
+        float timestep = Time.fixedDeltaTime; //later can be changed
         xMax = (inputList.Count - 1) * timestep; //seconds for display
         xMin = Mathf.Max(0f, inputList.Count - numDataPoints) * timestep;
         this.domain = xMax - xMin;
@@ -235,7 +235,7 @@ public class GraphControl : MonoBehaviour
         //System.Diagnostics.Stopwatch stopWatch = new Stopwatch();
         //stopWatch.Start();
 
-        yMax = 0f;
+        yMax = float.NegativeInfinity;
         yMin = float.PositiveInfinity;
 
         List<float>[] lists = new List<float>[6];
@@ -255,15 +255,15 @@ public class GraphControl : MonoBehaviour
         }
 
         this.range = yMax - yMin;
-        if (Math.Abs(range) < Util.EPSILON) { this.range = yMax; } //accounts for the case of a horizontal line
-        if (Math.Abs(range) < Util.EPSILON) { this.range = 10f; } //if yMax happens to be zero
+        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = yMax; } //accounts for the case of a horizontal line
+        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = 10f; } //if yMax happens to be zero
         yMax += this.range * 0.1f;
         yMin -= this.range * 0.1f;
         this.range = yMax - yMin;
 
-        float timestep = Time.fixedDeltaTime * 1000; //later can be changed
-        xMax = (inputList.Count - 1) * timestep; //seconds for display
-        xMin = Mathf.Max(0f, inputList.Count - numDataPoints) * timestep;
+        float timestep = Time.fixedDeltaTime; //later can be changed
+        xMax = maxIndex * timestep; //seconds for display
+        xMin = Mathf.Max(0f, maxIndex - numDataPoints + 1) * timestep;
         this.domain = xMax - xMin;
 
         for (int i = 0; i < 6; i++) ShowGraph_Helper(lists[i], lookup2[i]);
@@ -281,12 +281,14 @@ public class GraphControl : MonoBehaviour
         for(int i = 0; i <= separatorCountX; i++)
         {
             float normalizedValue = i * 1f / separatorCountX;
-            separatorsXText[i].text = Mathf.RoundToInt(xMin + normalizedValue * domain).ToString();
+            float value = xMin + normalizedValue * domain;
+            separatorsXText[i].text = (domain < 5f ? Mathf.Round(value * 10f) / 10f : Mathf.RoundToInt(value)).ToString();
         }
         for (int i = 0; i <= separatorCountY; i++)
         {
-            float normalizedValue = i * 1f / separatorCountX;
-            separatorsYText[i].text = Mathf.RoundToInt(yMin + normalizedValue * range).ToString();
+            float normalizedValue = i * 1f / separatorCountY;
+            float value = yMin + normalizedValue * range;
+            separatorsYText[i].text = (range < 100f ? Mathf.Round(value * 100f) / 100f : Mathf.RoundToInt(value)).ToString();
         }
     }
 
@@ -330,130 +332,6 @@ public class GraphControl : MonoBehaviour
         dot_connection.anchoredPosition = connectionPos;
         dot_connection.localEulerAngles = new Vector3(0, 0, Util.GetAngleFromVectorFloat(posB - posA));
     }
-
-    //apparently it is much more efficient to adjust existing objects than spawning new gameobjects
-    //private void ShowGraph_Helper (List<float> valueList, GraphOptions option)
-    //{ 
-    //    //for runtime testing
-    //    //System.Diagnostics.Stopwatch stopWatch = new Stopwatch();
-    //    //stopWatch.Start();
-
-    //    //destroys all previous objects;
-
-    //    //.Debug.Log("Count: " + inputList.Count);
-
-    //    //destroying objects seem a bit costly, should optimize later
-    //    for (int i = 0; i < gameObjectList.Count; i++)
-    //    {
-    //        Destroy(gameObjectList[i]);
-    //    }
-    //    gameObjectList.Clear();
-
-    //    if (valueList.Count == 0) return;
-
-    //    //set the new graph
-    //    float graphHeight = graphContainer.rect.height;
-    //    float graphWidth = graphContainer.rect.width;
-    //    float yMax = 0f;
-    //    float yMin = float.PositiveInfinity;
-    //    for (int i = 0; i < valueList.Count; i++)
-    //    {
-    //        yMax = Mathf.Max(yMax, valueList[i]);
-    //        yMin = Mathf.Min(yMin, valueList[i]);
-    //    }
-    //    float range = yMax - yMin;
-        //if (Math.Abs(range) < Util.EPSILON) { range = yMax; } //accounts for the case of a horizontal line
-        //if (Math.Abs(range) < Util.EPSILON) { range = 10f; } //if yMax happens to be zero
-        //yMax += range * 0.1f;
-        //yMin -= range * 0.1f;
-        //range = yMax - yMin;
-        //float timestep = Time.fixedDeltaTime * 1000; //later can be changed
-        //float xMax = (valueList.Count - 1)* timestep; //seconds for display
-        //float xMin = 0f;
-        //float domain = xMax - xMin;
-
-        //GameObject prev = null;
-        //for (int i = 0; i < valueList.Count; i++)
-        //{
-        //    float xpos = i * 1f / valueList.Count * graphWidth;
-        //    //UnityEngine.Debug.Log(xpos);
-        //    float ypos = (valueList[i] - yMin) / range * graphHeight;
-        //    GameObject curr = CreateCircle(new Vector2(xpos, ypos));
-        //    gameObjectList.Add(curr);
-        //    if (prev != null) gameObjectList.Add(CreateDotConnection(prev.GetComponent<RectTransform>().anchoredPosition, curr.GetComponent<RectTransform>().anchoredPosition));
-        //    prev = curr;
-        //}
-
-        //X-axis labels:
-        //int separatorCountX = 5;
-        //for (int i = 0; i <= separatorCountX; i++)
-        //{
-        //    RectTransform labelX = Instantiate(labelTemplateX);
-        //    labelX.SetParent(graphContainer);
-        //    labelX.gameObject.SetActive(true);
-        //    float normalizedValue = i * 1f / separatorCountX;
-        //    labelX.anchoredPosition = new Vector2(normalizedValue*graphWidth, -20f);
-        //    Text text = labelX.GetComponent<Text>();
-        //    //this rounding this is still kind of sketchy
-        //    text.text = Mathf.RoundToInt(xMin + normalizedValue * domain).ToString();
-        //    text.alignment = TextAnchor.MiddleCenter;
-        //    gameObjectList.Add(labelX.gameObject);
-
-        //    RectTransform dashY = Instantiate(dashTemplateY);
-        //    dashY.SetParent(graphContainer, false);
-        //    dashY.gameObject.SetActive(true);
-        //    dashY.anchoredPosition = new Vector2(normalizedValue * graphWidth, 0f);
-        //    dashY.sizeDelta = new Vector2(2f, graphHeight);
-        //    gameObjectList.Add(dashY.gameObject);
-        //}
-
-        ////Y-axis labels:
-        //int separatorCountY = 10;
-        //for (int i = 0; i <= separatorCountY; i++)
-        //{
-        //    RectTransform labelY = Instantiate(labelTemplateY);
-        //    labelY.SetParent(graphContainer);
-        //    labelY.gameObject.SetActive(true);
-        //    float normalizedValue = i * 1f / separatorCountY;
-        //    labelY.anchoredPosition = new Vector2(-20f, normalizedValue*graphHeight);
-        //    Text text = labelY.GetComponent<Text>();
-        //    //this rounding thing is kind of sketchy.
-        //    text.text = Mathf.RoundToInt(yMin + normalizedValue * range).ToString();
-        //    text.alignment = TextAnchor.MiddleCenter;
-        //    gameObjectList.Add(labelY.gameObject);
-
-        //    //create horizontal
-        //    RectTransform dashX = Instantiate(dashTemplateX);
-        //    dashX.SetParent(graphContainer, false);
-        //    dashX.gameObject.SetActive(true);
-        //    dashX.anchoredPosition = new Vector2(0f, normalizedValue * graphHeight);
-        //    dashX.sizeDelta = new Vector2(graphWidth, 2f);
-        //    gameObjectList.Add(dashX.gameObject);
-        //}
-
-        //Code
-        //stopWatch.Stop();
-        //// Get the elapsed time as a TimeSpan value.
-        //TimeSpan ts = stopWatch.Elapsed;
-        //UnityEngine.Debug.Log(ts.TotalMilliseconds);
-    //}
-
-    //private GameObject CreateDotConnection (Vector2 posA, Vector2 posB)
-    //{
-    //    GameObject obj = new GameObject("dot_connection", typeof(Image));
-    //    obj.transform.SetParent(graphContainer, false);
-    //    obj.GetComponent<Image>().color = new Color(1, 1, 1);
-    //    RectTransform rectTransform = obj.GetComponent<RectTransform>();
-    //    rectTransform.anchorMin = new Vector2 (0f, 0f);
-    //    rectTransform.anchorMax = new Vector2(0f, 0f);
-    //    rectTransform.pivot = new Vector2(0.5f, 0.5f);
-    //    Vector2 connectionPos = (posB + posA) / 2;
-    //    float dis = Vector2.Distance(posA, posB);
-    //    rectTransform.sizeDelta = new Vector2(dis, 4f);
-    //    rectTransform.anchoredPosition = connectionPos;
-    //    rectTransform.localEulerAngles = new Vector3(0, 0, Util.GetAngleFromVectorFloat(posB - posA));
-    //    return obj;
-    //}
 
     public void OnClickAccelerationX()
     {

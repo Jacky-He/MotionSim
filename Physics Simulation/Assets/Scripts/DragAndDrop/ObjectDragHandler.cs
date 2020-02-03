@@ -8,9 +8,6 @@ public class ObjectDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
     private Vector3 originalPosition;
 
-    public int index;
-    public float spacing;
-
     private Transform parentToReturnTo = null;
 
     public GameObject spritePreFab;

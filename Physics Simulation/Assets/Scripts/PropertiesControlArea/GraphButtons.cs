@@ -41,11 +41,11 @@ public class GraphButtons : MonoBehaviour
         this.image = this.checkbox.GetComponent<Image>();
         image.sprite = uncheckedBoxSprite;
         this.objectname = this.gameObject.GetComponent<Name>().objectname;
-        if (objectname == "AccelerationX") text.color = Util.graphColors[0];
-        else if (objectname == "AccelerationY") text.color = Util.graphColors[1];
-        else if (objectname == "VelocityX") text.color = Util.graphColors[2];
-        else if (objectname == "VelocityY") text.color = Util.graphColors[3];
-        else if (objectname == "DisplacementX") text.color = Util.graphColors[4];
-        else if (objectname == "DisplacementY") text.color = Util.graphColors[5];
+        //if (objectname == "AccelerationX") text.color = Util.graphColors[0];
+        //else if (objectname == "AccelerationY") text.color = Util.graphColors[1];
+        //else if (objectname == "VelocityX") text.color = Util.graphColors[2];
+        //else if (objectname == "VelocityY") text.color = Util.graphColors[3];
+        //else if (objectname == "DisplacementX") text.color = Util.graphColors[4];
+        //else if (objectname == "DisplacementY") text.color = Util.graphColors[5];
     }
 }

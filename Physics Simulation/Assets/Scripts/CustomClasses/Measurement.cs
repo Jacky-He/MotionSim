@@ -57,7 +57,7 @@ public class Measurement : MonoBehaviour
             Text t = label.GetComponent<Text>();
             t.color = new Color(1, 1, 1);
             t.fontSize = 60;
-            t.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
+            t.font = Util.Caladea_Bold;
         }
     }
 
@@ -78,9 +78,7 @@ public class Measurement : MonoBehaviour
 
     private void Awake()
     {
-        Initiate();
-        this.setActive(false);
-        this.trans = this.gameObject.GetComponent<tm>();
+        
     }
 
     private void Update()
@@ -92,7 +90,9 @@ public class Measurement : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        Initiate();
+        this.setActive(false);
+        this.trans = this.gameObject.GetComponent<tm>();
     }
 
 

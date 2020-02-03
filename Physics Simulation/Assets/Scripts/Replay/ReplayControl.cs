@@ -76,13 +76,19 @@ public class ReplayControl : MonoBehaviour
         if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOptions, index);
     }
 
+    Vector3 initPos = Vector3.negativeInfinity;
+    bool initpospresent = false;
+
     private void Record ()
     {
         if (!graphWindow.gameObject.activeSelf) graphWindow.gameObject.SetActive(true);
         //adds the velocity and acceleration of the objects
         Vector2 currAcceleration = (rb.velocity - prevVelocity) / Time.fixedDeltaTime;
         prevVelocity = rb.velocity;
-        pointsInTime.Add(new PointInTime(this.transform.position, this.transform.rotation, rb.velocity, rb.angularVelocity, currAcceleration));
+
+        if (!initpospresent) { initPos = this.transform.position; initpospresent = true; }
+
+        pointsInTime.Add(new PointInTime(this.transform.position - initPos, this.transform.rotation, rb.velocity, rb.angularVelocity, currAcceleration));
         if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOptions);
     }
 
