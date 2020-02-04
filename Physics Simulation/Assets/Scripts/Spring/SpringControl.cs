@@ -69,7 +69,7 @@ public class SpringControl : MonoBehaviour
             attachPoint2 = endPoint2.getWorldPoint();
             this.setConfig(attachPoint1, attachPoint2);
         }
-        else if (!ReplayControl.touchable && joints[0] == null && joints[1] == null) { Debug.Log("sdfd"); this.gameObject.GetComponent<Destructable>().Destruct(); }
+        else if (!ReplayControl.touchable && joints[0] == null && joints[1] == null) { this.gameObject.GetComponent<Destructable>().Destruct(); }
         else if (endPoint1 != null)
         {
             Vector3 worldpoint = endPoint1.getWorldPoint();
@@ -137,7 +137,7 @@ public class SpringControl : MonoBehaviour
     //check if attachable
     void setEndPoint1(GameObject go, Vector2 translate)
     {
-        if (endPoint1 != null) Destroy(endPoint1.gameObject.GetComponent<SpringJoint2D>());
+        if (endPoint1 != null) this.disableEndPoint1();
         SpringJoint2D joint = go.AddComponent<SpringJoint2D>();
         joint.enabled = false;
         joints[0] = joint;
@@ -150,11 +150,12 @@ public class SpringControl : MonoBehaviour
         if (endPoint2 != null)
         {
             joint.connectedBody = endPoint2.gameObject.GetComponent<Rigidbody2D>();
-            SpringJoint2D joint2 = endPoint2.gameObject.GetComponent<SpringJoint2D>();
+            //SpringJoint2D joint2 = endPoint2.gameObject.GetComponent<SpringJoint2D>();
+            SpringJoint2D joint2 = joints[1];
             joint2.enabled = false;
             joint.enabled = true;
             joint2.connectedBody = go.GetComponent<Rigidbody2D>();
-            joints[1] = joint2;
+            //joints[1] = joint2;
             //sets the anchor on the connected object;
             Collider2D tempcol2 = endPoint2.gameObject.GetComponent<Collider2D>();
             (float, float) size2 = (tempcol2.bounds.size.x, tempcol2.bounds.size.y);
@@ -166,7 +167,7 @@ public class SpringControl : MonoBehaviour
 
     void setEndPoint2 (GameObject go, Vector2 translate)
     {
-        if (endPoint2 != null) Destroy(endPoint2.gameObject.GetComponent<SpringJoint2D>());
+        if (endPoint2 != null) this.disableEndPoint2();
         SpringJoint2D joint = go.AddComponent<SpringJoint2D>();
         joint.enabled = false;
         joints[1] = joint;
@@ -179,11 +180,12 @@ public class SpringControl : MonoBehaviour
         if (endPoint1 != null)
         {
             joint.connectedBody = endPoint1.gameObject.GetComponent<Rigidbody2D>();
-            SpringJoint2D joint2 = endPoint1.gameObject.GetComponent<SpringJoint2D>();
+            //SpringJoint2D joint2 = endPoint1.gameObject.GetComponent<SpringJoint2D>();
+            SpringJoint2D joint2 = joints[0];
             joint2.enabled = false;
             joint.enabled = true;
             joint2.connectedBody = go.GetComponent<Rigidbody2D>();
-            joints[0] = joint2;
+            //joints[0] = joint2;
             //sets the anchor on the connected object;
             Collider2D tempcol2 = endPoint1.gameObject.GetComponent<Collider2D>();
             (float, float) size2 = (tempcol2.bounds.size.x, tempcol2.bounds.size.y);
@@ -419,8 +421,6 @@ public class SpringControl : MonoBehaviour
 
     private void OnJointBreak2D(Joint2D joint)
     {
-        Debug.Log(joint.reactionForce);
-
         if (joint == joints[0] || joint == joints[1])
         {
             disableEndPoint1();
@@ -447,15 +447,15 @@ public class SpringControl : MonoBehaviour
                 if (endPoint1.gameObject == joint.attachedRigidbody.gameObject)
                 {
                     joint.attachedRigidbody.AddForce(reactionForce);
-                    joint.connectedBody.AddForce(-1f*reactionForce);
-
+                    joint.connectedBody.AddForce(-1f * reactionForce);
+                    
                     joint.attachedRigidbody.AddForce((float)(-k * x) * dirup, ForceMode2D.Force);
                     joint.connectedBody.AddForce((float)(-k * x) * dirdown, ForceMode2D.Force);
                 }
                 else if (endPoint1.gameObject == joint.connectedBody.gameObject)
                 {
                     joint.attachedRigidbody.AddForce(reactionForce);
-                    joint.connectedBody.AddForce(-1f*reactionForce);
+                    joint.connectedBody.AddForce(-1f * reactionForce);
 
                     joint.connectedBody.AddForce((float)(-k * x) * dirup, ForceMode2D.Force);
                     joint.attachedRigidbody.AddForce((float)(-k * x) * dirdown, ForceMode2D.Force);

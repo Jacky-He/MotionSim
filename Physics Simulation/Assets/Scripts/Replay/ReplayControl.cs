@@ -71,12 +71,12 @@ public class ReplayControl : MonoBehaviour
         float percentage = SliderControl.percentage;
         int index = Mathf.RoundToInt(percentage * (pointsInTime.Count - 1)); //shouldn't overflow;
         PointInTime p = pointsInTime[index];
-        this.transform.position = p.position;
+        this.transform.position = initPos + p.position;
         this.transform.rotation = p.rotation;
         if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOptions, index);
     }
 
-    Vector3 initPos = Vector3.negativeInfinity;
+    Vector3 initPos = Vector3.zero;
     bool initpospresent = false;
 
     private void Record ()
@@ -97,11 +97,14 @@ public class ReplayControl : MonoBehaviour
         if (pointsInTime.Count > 0)
         {
             PointInTime init = pointsInTime[0];
-            this.transform.position = init.position;
+            this.transform.position = initPos + init.position;
+            Debug.Log(this.transform.position);
             this.transform.rotation = init.rotation;
             rb.velocity = init.velocity;
             rb.angularVelocity = init.angularVelocity;
             pointsInTime.Clear();
+            initpospresent = false;
+            initPos = Vector3.zero;
         }
         if (focusedObject == this.gameObject)
         {
@@ -114,7 +117,7 @@ public class ReplayControl : MonoBehaviour
         if (globalIndex < pointsInTime.Count)
         {
             PointInTime curr = pointsInTime[globalIndex];
-            this.transform.position = curr.position;
+            this.transform.position = initPos + curr.position;
             this.transform.rotation = curr.rotation;
             globalIndex++;
         }

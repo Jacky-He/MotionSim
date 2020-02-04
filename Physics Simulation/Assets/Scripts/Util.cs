@@ -55,6 +55,9 @@ public class Util: MonoBehaviour
     public static Color PropertiesTabOnColor = new Color(135f / 255f, 157f / 255f, 190f / 255f, 107f / 255f);
     public static Color PropertiesTabOffColor = new Color(120f / 255f, 120f / 255f, 120f / 255f, 80f / 255f);
 
+    public static Color ReplayButtonsOnColor = new Color(1, 1, 1, 1);
+    public static Color ReplayButtonsOffColor = new Color(1, 1, 1, 0.5f);
+
     public static Font Caladea_Regular;
     public static Font Caladea_Bold;
     public static Font Caladea_Italic;

@@ -35,6 +35,7 @@ public class ButtonsControl : MonoBehaviour
         //if not playing anymore, set everything to original position;
         if (!playState)
         {
+            playButton.GetComponent<Image>().color = Util.ReplayButtonsOnColor;
             stopButton.SetActive(false);
             ReplayControl.recording = false;
             ReplayControl.resetting = true;
@@ -42,6 +43,7 @@ public class ButtonsControl : MonoBehaviour
         }
         else
         {
+            playButton.GetComponent<Image>().color = Util.ReplayButtonsOffColor;
             stopButton.SetActive(true);
             ReplayControl.resetting = false;
             ReplayControl.replaying = false;
@@ -78,6 +80,7 @@ public class ButtonsControl : MonoBehaviour
         clearButton.SetActive(false);
         stopButton.SetActive(false);
         playState = false;
+        playButton.GetComponent<Image>().color = Util.ReplayButtonsOnColor;
         ReplayControl.recording = false;
         ReplayControl.resetting = false;
         ReplayControl.replaying = false;
@@ -128,37 +131,61 @@ public class ButtonsControl : MonoBehaviour
     public void OnClickLeftBack()
     {
         //animation
-        bool isShowing = objectsControlAreaAnimator.GetBool("isShowing");
+        bool isShowing = ObjectsControlScript.objectsControlAreaShowing;
         if (isShowing)
         {
-            objectsControlAreaAnimator.SetBool("isShowing", false);
-            objectsControlAreaAnimator.SetBool("isHiding", true);
+            ObjectsControlScript.objectsControlAreaShowing = false;
             leftBackButton.GetComponent<Image>().color = Util.LeftBackOffColor;
         }
         else
         {
-            objectsControlAreaAnimator.SetBool("isShowing", true);
-            objectsControlAreaAnimator.SetBool("isHiding", false);
+            ObjectsControlScript.objectsControlAreaShowing = true;
             leftBackButton.GetComponent<Image>().color = Util.LeftBackOnColor;
         }
+
+        //bool isShowing = objectsControlAreaAnimator.GetBool("isShowing");
+        //if (isShowing)
+        //{
+        //    objectsControlAreaAnimator.SetBool("isShowing", false);
+        //    objectsControlAreaAnimator.SetBool("isHiding", true);
+        //    leftBackButton.GetComponent<Image>().color = Util.LeftBackOffColor;
+        //}
+        //else
+        //{
+        //    objectsControlAreaAnimator.SetBool("isShowing", true);
+        //    objectsControlAreaAnimator.SetBool("isHiding", false);
+        //    leftBackButton.GetComponent<Image>().color = Util.LeftBackOnColor;
+        //}
     }
 
     public void OnClickRightBack()
     {
-        //animation
-        bool isShowing = propertiesControlAreaAnimator.GetBool("isShowing");
+        bool isShowing = PropertiesControlAreaScript.propertiesControlAreaShowing;
         if (isShowing)
         {
-            propertiesControlAreaAnimator.SetBool("isShowing", false);
-            propertiesControlAreaAnimator.SetBool("isHiding", true);
+            PropertiesControlAreaScript.propertiesControlAreaShowing = false;
             rightBackButton.GetComponent<Image>().color = Util.RightBackOffColor;
         }
         else
         {
-            propertiesControlAreaAnimator.SetBool("isShowing", true);
-            propertiesControlAreaAnimator.SetBool("isHiding", false);
+            PropertiesControlAreaScript.propertiesControlAreaShowing = true;
             rightBackButton.GetComponent<Image>().color = Util.RightBackOnColor;
         }
+
+        //animation
+        //bool isShowing = propertiesControlAreaAnimator.GetBool("isShowing");
+        //if (isShowing)
+        //{
+        //    propertiesControlAreaAnimator.SetBool("isShowing", false);
+        //    propertiesControlAreaAnimator.SetBool("isHiding", true);
+        //    rightBackButton.GetComponent<Image>().color = Util.RightBackOffColor;
+        //}
+        //else
+        //{
+        //    propertiesControlAreaAnimator.SetBool("isShowing", true);
+        //    propertiesControlAreaAnimator.SetBool("isHiding", false);
+        //    rightBackButton.GetComponent<Image>().color = Util.RightBackOnColor;
+        //}
     }
 
     public void OnClickGravity()

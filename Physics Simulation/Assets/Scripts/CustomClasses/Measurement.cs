@@ -35,7 +35,7 @@ public class Measurement : MonoBehaviour
             {
                 go obj = new go("line", typeof(Image));
                 obj.transform.SetParent(this.canvas, false);
-                obj.GetComponent<Image>().color = new Color(1, 1, 1);
+                obj.GetComponent<Image>().color = Color.red;
                 rtm temp = obj.GetComponent<rtm>();
                 temp.anchorMax = temp.anchorMin = new v2(0f, 0f);
                 temp.pivot = new v2(0f, 0.5f);
@@ -93,6 +93,7 @@ public class Measurement : MonoBehaviour
         Initiate();
         this.setActive(false);
         this.trans = this.gameObject.GetComponent<tm>();
+        for (int i = 0; i < 2; i++) foreach (rtm each in rtms[i]) each.SetAsFirstSibling();
     }
 
 

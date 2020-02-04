@@ -15,6 +15,8 @@ public class Attachable : MonoBehaviour
     public HashSet<Force> forces = new HashSet<Force>();
     public HashSet<Velocity> velocities = new HashSet<Velocity>();
 
+    bool flag = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,10 +34,13 @@ public class Attachable : MonoBehaviour
     {
         if (!rb.isKinematic)
         {
-            foreach (Force force in forces)
+            foreach (Force force in forces) rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
+            if (!flag)
             {
-                rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
-                //rb.AddForce(force.normalizedDirection * force.magnitude, force.mode);
+                Vector3 res = Vector3.zero;
+                foreach (Velocity each in velocities) res += each.velocity;
+                rb.velocity = res;
+                flag = true;
             }
         }
         if (Util.OutOfBound(this.transform.position)) this.gameObject.GetComponent<Destructable>().Destruct();
@@ -54,17 +59,11 @@ public class Attachable : MonoBehaviour
     public void AddVelocity (Velocity v)
     { 
         velocities.Add(v);
-        Vector3 res = Vector3.zero;
-        foreach (Velocity each in velocities) res += each.velocity;
-        rb.velocity = res;
     }
 
     public void RemoveVelocity (Velocity v)
     {
         velocities.Remove(v);
-        Vector3 res = Vector3.zero;
-        foreach (Velocity each in velocities) res += each.velocity;
-        rb.velocity = res;
     }
 
     //Update is called once per frame

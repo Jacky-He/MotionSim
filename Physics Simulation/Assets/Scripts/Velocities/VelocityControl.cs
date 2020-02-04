@@ -28,10 +28,10 @@ public class VelocityControl: MonoBehaviour
     private static float heightMultiplier = 1f;
     public static float defaultHeight = 1f;
 
-    private float prevangle = -1f;
-
     private PropertiesAreaScript propertiesAreaScript;
     public GameObject propertiesArea;
+
+    private float prevangle = -1f;
 
     private float height { get { return heightMultiplier * trans.localScale.y; } }
 
@@ -235,7 +235,8 @@ public class VelocityControl: MonoBehaviour
         this.trans.localEulerAngles = new Vector3 (0f, 0f, newangle);
         //configure the forces
         float prev = velocity.velocity.magnitude;
-        float speed = distance * 50f;
+        float speed = distance;
+
         velocity.velocity = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized * speed;
         if (!(Mathf.Abs(prev - velocity.velocity.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(6);
         if (!(Mathf.Abs(prevangle - angle) < Util.EPSILON)) { propertiesAreaScript.CoerceAdjustValues(7); prevangle = angle; }
@@ -243,7 +244,7 @@ public class VelocityControl: MonoBehaviour
 
     public void setSpeed (float speed)
     {
-        float distance = speed / 50f;
+        float distance = speed;
         attachPoint1 = attachPoint2 + distance * (velocity.velocity.normalized);
     }
 

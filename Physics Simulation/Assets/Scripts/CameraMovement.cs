@@ -8,7 +8,7 @@ public class CameraMovement : MonoBehaviour
     private (float, float) earthYShiftUnadjusted = (-6.3f, -5.3f);
     private (float, float) earthScaleFactorUnadjusted = (1.2f, 0.8f);
     private float defaultOrthographicSize = 2.5f;
-    private float defaultBackgroundScale = 20f;
+    private float defaultBackgroundScale = 25f;
     private float defaultEarthScale = 20f;
     private GameObject backgroundSprite;
     private GameObject earthImage;

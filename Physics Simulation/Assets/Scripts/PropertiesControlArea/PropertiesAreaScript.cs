@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using v2 = UnityEngine.Vector2;
 using v3 = UnityEngine.Vector3;
 using go = UnityEngine.GameObject;
@@ -17,11 +18,13 @@ public class PropertiesAreaScript: MonoBehaviour
     Text[] labels = new Text[numProperties];
     InputField[] inputFields = new InputField[numProperties];
     Slider[] sliders = new Slider[numProperties];
+    go deleteButton;
 
     public go scrollContent;
     public go sliderTemplate;
     public go labelTemplate;
     public go inputFieldTemplate;
+    public go deleteButtonTemplate;
 
     private go canvass;
     private int currmask;
@@ -76,6 +79,8 @@ public class PropertiesAreaScript: MonoBehaviour
             sliders[i].gameObject.SetActive(false);
             sliders[i].gameObject.transform.SetParent(canvass.transform);
         }
+        deleteButton.SetActive(false);
+        deleteButton.transform.SetParent(canvass.transform);
         for (int i = 0, tempmask = mask;  tempmask != 0; i++, tempmask >>= 1)
         {
             if ((tempmask&1) == 1)
@@ -87,6 +92,11 @@ public class PropertiesAreaScript: MonoBehaviour
                 sliders[i].gameObject.transform.SetParent(scrollContent.transform);
                 sliders[i].gameObject.SetActive(true);
             }
+        }
+        if(mask != 0)
+        {
+            deleteButton.transform.SetParent(scrollContent.transform);
+            deleteButton.SetActive(true);
         }
         AdjustValues();
     }
@@ -120,6 +130,12 @@ public class PropertiesAreaScript: MonoBehaviour
             s.onValueChanged.AddListener(delegate { this.sliderValueChange(j); });
             sliders[i] = s;
         }
+        go obj4 = Instantiate(deleteButtonTemplate) as go;
+        obj4.SetActive(false);
+        obj4.transform.SetParent(scrollContent.transform, false);
+        Button button = obj4.GetComponent<Button>();
+        button.onClick.AddListener(delegate { this.Delete(); });
+        deleteButton = obj4;
     }
 
     public void CoerceAdjustValues(int i)
@@ -132,6 +148,7 @@ public class PropertiesAreaScript: MonoBehaviour
             float newtons = Mathf.Clamp(force.getForce(), bounds.Item1, bounds.Item2);
             sliders[i].SetValueWithoutNotify((newtons - bounds.Item1) / bounds.Item2);
             inputFields[i].SetTextWithoutNotify("" + Mathf.Round(newtons * 100f) / 100f);
+           // Debug.Log(sliders[i].value);
         }
         else if (i == 6)
         {
@@ -217,7 +234,7 @@ public class PropertiesAreaScript: MonoBehaviour
                 (float, float) bounds = (0.01f, 1000f);
                 ForceControl force = focused.GetComponent<ForceControl>();
                 float newtons = Mathf.Clamp(force.getForce(), bounds.Item1, bounds.Item2);
-                sliders[i].SetValueWithoutNotify((newtons - bounds.Item1)/bounds.Item2);
+                sliders[i].SetValueWithoutNotify((newtons - bounds.Item1) / bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(newtons * 100f) / 100f);
             }
             else if (i == 6) //velocity
@@ -232,6 +249,18 @@ public class PropertiesAreaScript: MonoBehaviour
             {
                 (float, float) bounds = (0f, 359f);
                 float angle = transcurr.localEulerAngles.z;
+                if (namecurr == "Force")
+                {
+                    ForceControl force = focused.GetComponent<ForceControl>();
+                    if (force == null) return;
+                    angle = Mathf.Clamp(force.getAngle(), bounds.Item1, bounds.Item2);
+                }
+                else if (namecurr == "Velocity")
+                {
+                    VelocityControl velocity = focused.GetComponent<VelocityControl>();
+                    if (velocity == null) return;
+                    angle = Mathf.Clamp(velocity.getAngle(), bounds.Item1, bounds.Item2);
+                }
                 sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
             }
@@ -258,6 +287,7 @@ public class PropertiesAreaScript: MonoBehaviour
 
     public void sliderValueChange (int idx)
     {
+        if (sliders[idx].gameObject != EventSystem.current.currentSelectedGameObject) return;
        // Debug.Log(idx);
         float value = sliders[idx].value;
         if (idx == 0)
@@ -447,5 +477,12 @@ public class PropertiesAreaScript: MonoBehaviour
     public void fieldEndEdit(int idx)
     {
 
+    }
+
+    public void Delete ()
+    {
+        if (namecurr == "") return;
+        if (focused == null) return;
+        focused.GetComponent<Destructable>().Destruct();
     }
 }

@@ -11,6 +11,7 @@ public class ForceControl: MonoBehaviour
         set { _targetPoint = value; }
     }
     private RectRotatePoint tentative;
+
     private Force force = new Force ();
 
     private Collider2D col;
@@ -201,10 +202,7 @@ public class ForceControl: MonoBehaviour
                 attachPoint2 = worldpoint;
                 this.setConfig(attachPoint1, attachPoint2);
             }
-            else if (PropertiesEditable.focusedObject == this.gameObject)
-            {
-                this.setConfig(attachPoint1, attachPoint2);
-            }
+            else if (PropertiesEditable.focusedObject == this.gameObject) this.setConfig(attachPoint1, attachPoint2);
         }
         else
         {
@@ -237,8 +235,8 @@ public class ForceControl: MonoBehaviour
         this.trans.localEulerAngles = new Vector3 (0f, 0f, newangle);
         //configure the forces
         float prevmagnitude = force.magnitude;
-        float prevangle = 
-        force.magnitude = distance * 10f;
+        force.magnitude = distance;
+
         force.normalizedDirection = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
         if (!(Mathf.Abs(prevmagnitude - force.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(5);
         if (!(Mathf.Abs(prevangle - angle) < Util.EPSILON)) { propertiesAreaScript.CoerceAdjustValues(7); prevangle = angle; }
@@ -246,9 +244,8 @@ public class ForceControl: MonoBehaviour
 
     public void setForce (float newtons)
     {
-        float distance = newtons / 10f;
+        float distance = newtons;
         attachPoint1 = attachPoint2 + distance * force.normalizedDirection;
-        //this.trans.localScale = new Vector2(this.trans.localScale.x, distance / heightMultiplier);
     }
 
     public float getForce ()

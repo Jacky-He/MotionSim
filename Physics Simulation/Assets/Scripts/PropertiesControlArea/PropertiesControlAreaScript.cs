@@ -24,22 +24,43 @@ public class PropertiesControlAreaScript : MonoBehaviour
 
     bool graph = false;
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
+    
     // Update is called once per frame
     void Update()
     {
-        if (ReplayControl.focusedObject != null && ReplayControl.focusedObject.GetComponent<ReplayControl>() != null && graph)
+        if (focusedObject != null && focusedObject.GetComponent<ReplayControl>() != null && graph)
         {
             if (!grapharea.activeSelf)
             {
                 graph = false;
                 OnClickGraphTab();
             }
+        }
+        if (focusedObject == null)
+        {
+            if (grapharea.activeSelf && graph) grapharea.SetActive(false);
+        }
+        else
+        {
+            Name name = focusedObject.GetComponent<Name>();
+            if (name.objectname == "Spring" || name.objectname == "Force" || name.objectname == "Velocity")
+            {
+                if (grapharea.activeSelf && graph) grapharea.SetActive(false);
+            }
+        }
+
+        //animation
+        if (propertiesControlAreaShowing)
+        {
+            v3 oldpos = propertiesControlAreaRTM.anchoredPosition;
+            if (oldpos.x <= propertiesControlAreaOutXpos) propertiesControlAreaRTM.anchoredPosition = new v2(propertiesControlAreaOutXpos, oldpos.y);
+            propertiesControlAreaRTM.anchoredPosition = new v2(Mathf.Max(oldpos.x - propertiesControlAreaAnimationShift / propertiesControlAreaAnimationTime * Time.deltaTime, propertiesControlAreaOutXpos), oldpos.y);
+        }
+        else
+        {
+            v3 oldpos = propertiesControlAreaRTM.anchoredPosition;
+            if (oldpos.x <= propertiesControlAreaInXpos) propertiesControlAreaRTM.anchoredPosition = new v2(propertiesControlAreaInXpos, oldpos.y);
+            propertiesControlAreaRTM.anchoredPosition = new v2(Mathf.Min(oldpos.x + propertiesControlAreaAnimationShift / propertiesControlAreaAnimationTime * Time.deltaTime, propertiesControlAreaInXpos), oldpos.y);
         }
     }
 
@@ -53,6 +74,11 @@ public class PropertiesControlAreaScript : MonoBehaviour
         gc = go.Find("GraphWindow").GetComponent<GraphControl>();
 
         OnClickGraphTab();
+
+        //animation
+        canvas = go.Find("Canvas");
+        propertiesControlArea = go.Find("PropertiesControlArea");
+        propertiesControlAreaRTM = propertiesControlArea.GetComponent<rtm>();
     }
 
     public void OnClickGraphTab()
@@ -80,5 +106,42 @@ public class PropertiesControlAreaScript : MonoBehaviour
 
         grapharea.SetActive(false);
         propertiesarea.SetActive(true);
+    }
+
+
+    //animation
+    private go canvas;
+    private rtm propertiesControlAreaRTM;
+    private go propertiesControlArea;
+
+    //private static bool propertiesControlAreaShown = true;
+    public static bool propertiesControlAreaShowing = true;
+
+    //private static float propertiesControlAreaAnimationTime = 1f; //seconds
+    public static float propertiesControlAreaAnimationTime = 0.2f; //seconds
+
+    //private static float propertiesControlAreaAnimationShift = 1f;
+    public static float propertiesControlAreaAnimationShift = 1f;
+
+    public static float propertiesControlAreaOutXpos;
+    public static float propertiesControlAreaInXpos;
+
+    // Use this for initialization
+    void Start()
+    {
+        ApplySafeArea();
+    }
+
+    private void ApplySafeArea()
+    {
+        Rect safeArea = Screen.safeArea;
+
+        v3 safeAreaPos = safeArea.position / canvas.transform.localScale.x;
+
+        propertiesControlAreaOutXpos = Application.isMobilePlatform ? -safeAreaPos.x : 0f;
+
+        propertiesControlAreaInXpos = 651f;
+
+        propertiesControlAreaAnimationShift = Mathf.Abs(propertiesControlAreaOutXpos - propertiesControlAreaInXpos);
     }
 }

@@ -108,7 +108,7 @@ public class PropertiesEditable: MonoBehaviour
         dashhorizontal.sizeDelta = new v2(length, 3f);
 
         Text t = label.GetComponent<Text>();
-        float angle = (trans.eulerAngles.z + 90f)%360f;
+        float angle = force.getAngle();
         t.text = Mathf.Round(angle * 100f) / 100f + "°";
 
         if (angle < 40f) angle += 15;
@@ -124,8 +124,8 @@ public class PropertiesEditable: MonoBehaviour
         dashmoving.gameObject.SetActive(false);
         label.gameObject.SetActive(true);
 
-        VelocityControl force = this.gameObject.GetComponent<VelocityControl>();
-        v3 pos = force.attachPoint2;
+        VelocityControl velocity = this.gameObject.GetComponent<VelocityControl>();
+        v3 pos = velocity.attachPoint2;
         pos.z = 0;
         v3 localpos = Camera.main.WorldToScreenPoint(pos) / this.canvas.localScale.x;
         localpos.z = 0;
@@ -138,7 +138,7 @@ public class PropertiesEditable: MonoBehaviour
         dashhorizontal.sizeDelta = new v2(length, 3f);
 
         Text t = label.GetComponent<Text>();
-        float angle = (trans.eulerAngles.z + 90f) % 360f;
+        float angle = velocity.getAngle();
         t.text = Mathf.Round(angle * 100f) / 100f + "°";
 
         if (angle < 40f) angle += 15;
@@ -180,7 +180,7 @@ public class PropertiesEditable: MonoBehaviour
 
         //set width
         float length = trans.localScale.x * Util.FixedRectWidthMultiplier * Util.WorldToScreenMultiplier;
-        dashmoving.sizeDelta = dashhorizontal.sizeDelta = new v2(length, 3f);
+        dashmoving.sizeDelta = dashhorizontal.sizeDelta = new v2(length/2f, 3f);
 
         //set the label
         //get angle
@@ -202,23 +202,11 @@ public class PropertiesEditable: MonoBehaviour
 
     private void Start()
     {
-
-    }
-
-    public void Destruct()
-    {
-        Measurement m = this.gameObject.GetComponent<Measurement>();
-        if (m != null) m.Destruct();
-        foreach (go each in displays) Destroy(each);
-    }
-
-    private void Awake()
-    {
         this.canvas = go.Find("Canvas").GetComponent<RectTransform>();
 
         go obj = new go("line", typeof(Image));
         obj.transform.SetParent(this.canvas, false);
-        obj.GetComponent<Image>().color = new Color(1, 1, 1);
+        obj.GetComponent<Image>().color = Color.red;
         dashhorizontal = obj.GetComponent<RectTransform>();
         dashhorizontal.anchorMax = dashhorizontal.anchorMin = new v2(0f, 0f);
         dashhorizontal.pivot = new v2(0f, 0.5f);
@@ -227,7 +215,7 @@ public class PropertiesEditable: MonoBehaviour
 
         go obj2 = new go("line", typeof(Image));
         obj2.transform.SetParent(this.canvas, false);
-        obj2.GetComponent<Image>().color = new Color(1, 1, 1);
+        obj2.GetComponent<Image>().color = Color.red;
         dashmoving = obj2.GetComponent<RectTransform>();
         dashmoving.anchorMax = dashmoving.anchorMin = new v2(0f, 0f);
         dashmoving.pivot = new v2(0f, 0.5f);
@@ -245,9 +233,22 @@ public class PropertiesEditable: MonoBehaviour
         t.alignment = TextAnchor.MiddleCenter;
         t.color = new Color(1, 1, 1);
         t.fontSize = 30;
-        t.font = (Font)Resources.GetBuiltinResource(typeof(Font), "Arial.ttf");
+        t.font = Util.Caladea_Bold;
 
         trans = this.gameObject.GetComponent<Transform>();
+
+        foreach (go each in displays) each.transform.SetAsFirstSibling();
+    }
+
+    public void Destruct()
+    {
+        Measurement m = this.gameObject.GetComponent<Measurement>();
+        if (m != null) m.Destruct();
+        foreach (go each in displays) Destroy(each);
+    }
+
+    private void Awake()
+    {
         
     }
 }
