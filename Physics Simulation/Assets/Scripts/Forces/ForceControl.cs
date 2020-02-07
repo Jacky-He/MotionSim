@@ -26,7 +26,7 @@ public class ForceControl: MonoBehaviour
     private bool touchAbove;
 
     private static float heightMultiplier = 1f;
-    public static float defaultHeight = 1f;
+    public static float defaultHeight = 2f;
 
     private PropertiesAreaScript propertiesAreaScript;
     public GameObject propertiesArea;
@@ -71,13 +71,16 @@ public class ForceControl: MonoBehaviour
         {
             if (Input.touchCount == 1)
             {
-                touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 screenpos = Input.mousePosition;
+                screenpos.z = 0;
+                touchStart = Camera.main.ScreenToWorldPoint(screenpos);
                 touchStart.z = 0;
-                if (col.bounds.Contains(touchStart))
+                if (Util.ColliderContains(col, touchStart, 8) && Util.OnCanvas(screenpos))
                 {
                     onSprite = true;
                     PropertiesEditable.focusedObject = this.gameObject;
                     Util.objectDragged = true;
+                    Util.draggedObject = this.gameObject;
                     touchAbove = Above(touchStart);
                 }
             }
@@ -97,6 +100,7 @@ public class ForceControl: MonoBehaviour
                 if (onSprite) UpdateTargetPoint();
                 onSprite = false;
                 Util.objectDragged = false;
+                Util.draggedObject = null;
             }
             lastTouchCnt = 1;
         }

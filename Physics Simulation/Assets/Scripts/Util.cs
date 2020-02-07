@@ -15,6 +15,7 @@ public class Util: MonoBehaviour
 
     public static bool sliderSelected = false;
     public static bool objectDragged = false;
+    public static GameObject draggedObject = null;
     public static float EPSILON = 0.00001f;
     public static float EPSILON_SMALL = 0.001f;
 
@@ -102,9 +103,26 @@ public class Util: MonoBehaviour
         return Vector2.SignedAngle(vec1, vec2);
     }
 
+    public static bool ColliderContains (Collider2D collider, Vector3 poscheck, int layer)
+    {
+        RaycastHit2D hit;
+        Vector2 offset = poscheck - collider.bounds.center;
+        int layerMask = (1 << layer);
+
+        hit = Physics2D.Raycast(poscheck, offset.normalized, offset.magnitude * 0.9f, layerMask);
+        Debug.DrawRay(poscheck, offset, Color.green);
+
+        return hit.collider == collider;
+    }
+
     void Update()
     {
         
+    }
+
+    private void Start()
+    {
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
     }
 
     private void Awake()

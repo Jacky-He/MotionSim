@@ -240,10 +240,8 @@ public class PropertiesEditable: MonoBehaviour
         foreach (go each in displays) each.transform.SetAsFirstSibling();
     }
 
-    public void Destruct()
+    private void OnDestroy()
     {
-        Measurement m = this.gameObject.GetComponent<Measurement>();
-        if (m != null) m.Destruct();
         foreach (go each in displays) Destroy(each);
     }
 

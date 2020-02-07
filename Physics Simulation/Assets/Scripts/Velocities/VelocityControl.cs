@@ -26,7 +26,7 @@ public class VelocityControl: MonoBehaviour
     private bool touchAbove;
 
     private static float heightMultiplier = 1f;
-    public static float defaultHeight = 1f;
+    public static float defaultHeight = 2f;
 
     private PropertiesAreaScript propertiesAreaScript;
     public GameObject propertiesArea;
@@ -71,13 +71,16 @@ public class VelocityControl: MonoBehaviour
         {
             if (Input.touchCount == 1)
             {
+                Vector3 screenpos = Input.mousePosition;
+                screenpos.z = 0;
                 touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 touchStart.z = 0;
-                if (col.bounds.Contains(touchStart))
+                if (Util.ColliderContains(col, touchStart, 8) && Util.OnCanvas(screenpos))
                 {
                     onSprite = true;
                     PropertiesEditable.focusedObject = this.gameObject;
                     Util.objectDragged = true;
+                    Util.draggedObject = this.gameObject;
                     touchAbove = Above(touchStart);
                 }
             }
@@ -97,6 +100,7 @@ public class VelocityControl: MonoBehaviour
                 if (onSprite) UpdateTargetPoint();
                 onSprite = false;
                 Util.objectDragged = false;
+                Util.draggedObject = null;
             }
             lastTouchCnt = 1;
         }
@@ -235,7 +239,7 @@ public class VelocityControl: MonoBehaviour
         this.trans.localEulerAngles = new Vector3 (0f, 0f, newangle);
         //configure the forces
         float prev = velocity.velocity.magnitude;
-        float speed = distance;
+        float speed = distance * 5f;
 
         velocity.velocity = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized * speed;
         if (!(Mathf.Abs(prev - velocity.velocity.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(6);
@@ -244,7 +248,7 @@ public class VelocityControl: MonoBehaviour
 
     public void setSpeed (float speed)
     {
-        float distance = speed;
+        float distance = speed / 5f;
         attachPoint1 = attachPoint2 + distance * (velocity.velocity.normalized);
     }
 

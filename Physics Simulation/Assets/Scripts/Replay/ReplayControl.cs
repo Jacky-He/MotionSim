@@ -13,6 +13,8 @@ public class ReplayControl : MonoBehaviour
     public static bool replaying = false;
     public static bool touchable = true;
 
+    public static long totalPointsCnt = 0;
+
     public static bool controlledByAnim = true;
     public static bool adjustable = true;
 
@@ -53,6 +55,7 @@ public class ReplayControl : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (totalPointsCnt > 138000) ButtonsControl.StaticStop();
         //this object will be destroyed
         if (spriteName != "FixedRectangle" && spriteName != "Spring" && spriteName != "Force")
         {
@@ -89,6 +92,7 @@ public class ReplayControl : MonoBehaviour
         if (!initpospresent) { initPos = this.transform.position; initpospresent = true; }
 
         pointsInTime.Add(new PointInTime(this.transform.position - initPos, this.transform.rotation, rb.velocity, rb.angularVelocity, currAcceleration));
+        totalPointsCnt++;
         if (focusedObject == this.gameObject) gc.ShowGraph(pointsInTime, graphOptions);
     }
 
@@ -98,7 +102,7 @@ public class ReplayControl : MonoBehaviour
         {
             PointInTime init = pointsInTime[0];
             this.transform.position = initPos + init.position;
-            Debug.Log(this.transform.position);
+            //Debug.Log(this.transform.position);
             this.transform.rotation = init.rotation;
             rb.velocity = init.velocity;
             rb.angularVelocity = init.angularVelocity;
@@ -140,8 +144,6 @@ public class ReplayControl : MonoBehaviour
     }
 
     //when floating point precision issues start to occur
-    
-
     private void Awake()
     {
         //temporary

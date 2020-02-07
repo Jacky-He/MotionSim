@@ -2659,7 +2659,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: bcf2be5c7445d4d49bae24a000d0535e, type: 3}
+    m_Font: {fileID: 12800000, guid: 40c43943c02fa47a6bee7426df8a1690, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
@@ -5327,7 +5327,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: bcf2be5c7445d4d49bae24a000d0535e, type: 3}
+    m_Font: {fileID: 12800000, guid: 40c43943c02fa47a6bee7426df8a1690, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
@@ -7302,6 +7302,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Circle
       objectReference: {fileID: 0}
+    - target: {fileID: 4061838876547079868, guid: 8f99541df4c974e0cbcfbba800b518c2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6149512970386134413, guid: 8f99541df4c974e0cbcfbba800b518c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8069,11 +8074,6 @@ PrefabInstance:
       propertyPath: propertiesArea
       value: 
       objectReference: {fileID: 8658817}
-    - target: {fileID: 4749805403403141913, guid: 8bd811ecba11141c9aa885b2f60c8533,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8bd811ecba11141c9aa885b2f60c8533, type: 3}
 --- !u!1 &4749805403403141910 stripped

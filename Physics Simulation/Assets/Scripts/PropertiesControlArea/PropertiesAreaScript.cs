@@ -7,6 +7,7 @@ using v3 = UnityEngine.Vector3;
 using go = UnityEngine.GameObject;
 using rtm = UnityEngine.RectTransform;
 using tm = UnityEngine.Transform;
+using System;
 
 public class PropertiesAreaScript: MonoBehaviour
 {
@@ -152,7 +153,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (i == 6)
         {
-            (float, float) bounds = (0.01f, 1000f);
+            (float, float) bounds = (0.01f, 100f);
             VelocityControl velocity = focused.GetComponent<VelocityControl>();
             if (velocity == null) return;
             float speed = Mathf.Clamp(velocity.getSpeed(), bounds.Item1, bounds.Item2);
@@ -161,7 +162,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (i == 7)
         {
-            (float, float) bounds = (0f, 359f);
+            (float, float) bounds = (0.01f, 359f);
             if (namecurr == "Force")
             {
                 ForceControl force = focused.GetComponent<ForceControl>();
@@ -192,13 +193,13 @@ public class PropertiesAreaScript: MonoBehaviour
             if ((tempmask & 1) != 1) continue;
             if (i == 0)
             {
-                (float, float) bounds = (0f, 100f);
+                (float, float) bounds = (0.01f, 1000f);
                 sliders[i].SetValueWithoutNotify ((rbcurr.mass - bounds.Item1)/bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(rbcurr.mass*100f)/100f); 
             }
             else if (i == 1)
             {
-                (float, float) bounds = (0f, 100f);
+                (float, float) bounds = (0.01f, 100f);
                 float length = 0f;
                 if (namecurr == "FixedRectangle") length = transcurr.localScale.x * Util.FixedRectWidthMultiplier;
                 else if (namecurr == "MoveableRectangle") length = transcurr.localScale.x * Util.MoveableRectWidthMultiplier;
@@ -207,7 +208,7 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 2)
             {
-                (float, float) bounds = (0f, 100f);
+                (float, float) bounds = (0.01f, 100f);
                 float width = 0f;
                 if (namecurr == "FixedRectangle") width = transcurr.localScale.y * Util.FixedRectHeightMultiplier;
                 else if (namecurr == "MoveableRectangle") width = transcurr.localScale.y * Util.MoveableRectHeightMultiplier;
@@ -216,14 +217,14 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 3) //circle
             {
-                (float, float) bounds = (0f, 100f);
+                (float, float) bounds = (0.01f, 100f);
                 float diameter = transcurr.localScale.x;
                 sliders[i].SetValueWithoutNotify((diameter - bounds.Item1) / bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(diameter * 100f) / 100f);
             }
             else if (i == 4) //spring constant (N/m)
             {
-                (float, float) bounds = (0.01f, 100f);
+                (float, float) bounds = (0.01f, 1000f);
                 SpringControl spring = focused.GetComponent<SpringControl>();
                 float constant = Mathf.Clamp(spring.getSpringConstant(), bounds.Item1, bounds.Item2);
                 sliders[i].SetValueWithoutNotify((constant - bounds.Item1) / bounds.Item2);
@@ -239,7 +240,7 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 6) //velocity
             {
-                (float, float) bounds = (0.01f, 1000f);
+                (float, float) bounds = (0.01f, 100f);
                 VelocityControl velocity = focused.GetComponent<VelocityControl>();
                 float speed = Mathf.Clamp(velocity.getSpeed(), bounds.Item1, bounds.Item2);
                 sliders[i].SetValueWithoutNotify((speed - bounds.Item1) / bounds.Item2);
@@ -247,7 +248,7 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 7)
             {
-                (float, float) bounds = (0f, 359f);
+                (float, float) bounds = (0.01f, 359f);
                 float angle = transcurr.localEulerAngles.z;
                 if (namecurr == "Force")
                 {
@@ -268,7 +269,7 @@ public class PropertiesAreaScript: MonoBehaviour
             {
                 //cannot set this property when spring is attached
                 SpringControl spring = focused.GetComponent<SpringControl>();
-                if (!spring.available()) { this.CoerceAdjustValues(8); return; }
+                //if (!spring.available()) { this.CoerceAdjustValues(8); return; }
                 (float, float) bounds = (0.01f, 100f);
                 float elength = Mathf.Clamp(spring.getElength(), bounds.Item1, bounds.Item2);
                 sliders[i].SetValueWithoutNotify((elength - bounds.Item1) / bounds.Item2);
@@ -276,11 +277,11 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 9) //break force (N)
             {
-                (float, float) bounds = (0f, 100f);
+                (double, double) bounds = (0.01, 99999999);
                 SpringControl spring = focused.GetComponent<SpringControl>();
-                float breakforce = Mathf.Clamp(spring.getBreakForce(), bounds.Item1, bounds.Item2);
-                sliders[i].SetValueWithoutNotify((breakforce- bounds.Item1) / bounds.Item2);
-                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(breakforce * 100f) / 100f);
+                double breakforce = Math.Max(Math.Min(spring.getBreakForce(), bounds.Item2), bounds.Item1);
+                sliders[i].SetValueWithoutNotify((float)((breakforce - bounds.Item1) / bounds.Item2));
+                inputFields[i].SetTextWithoutNotify("" + Math.Round(breakforce * 100f) / 100f);
             }
         }
     }
@@ -292,14 +293,14 @@ public class PropertiesAreaScript: MonoBehaviour
         float value = sliders[idx].value;
         if (idx == 0)
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
             float mass = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             rbcurr.mass = mass;
             inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(mass * 100f) / 100f);
         }
         else if (idx == 1)
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 100f);
             float length = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(length / Util.FixedRectWidthMultiplier, transcurr.localScale.y);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(length / Util.MoveableRectWidthMultiplier, transcurr.localScale.y);
@@ -307,7 +308,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 2)
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 100f);
             float width = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.FixedRectHeightMultiplier);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.MoveableRectHeightMultiplier);
@@ -315,14 +316,14 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 3) //circle
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 100f);
             float diameter = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             transcurr.localScale = new v2(diameter, diameter);
             inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(diameter * 100f) / 100f);
         }
         else if (idx == 4) //spring constant (N/m)
         {
-            (float, float) bounds = (0.01f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
             SpringControl spring = focused.GetComponent<SpringControl>();
             float constant = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             spring.setSpringConstant(constant);
@@ -338,14 +339,14 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 6) //velocity
         {
-            (float, float) bounds = (0.01f, 1000f);
+            (float, float) bounds = (0.01f, 100f);
             float speed = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             VelocityControl velocity = focused.GetComponent<VelocityControl>();
             velocity.setSpeed(speed);
         }
         else if (idx == 7)
         {
-            (float, float) bounds = (0f, 359f);
+            (float, float) bounds = (0.01f, 359f);
             float angle = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             if (namecurr == "Force") this.focused.GetComponent<ForceControl>().setAngle(angle);
             else if (namecurr == "Velocity") this.focused.GetComponent<VelocityControl>().setAngle(angle);
@@ -365,112 +366,131 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 9) //break force (N)
         {
-            (float, float) bounds = (0f, 100f);
+            (double, double) bounds = (0.01, 99999999);
             SpringControl spring = focused.GetComponent<SpringControl>();
-            float breakforce = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
+            double breakforce = bounds.Item1 + value * (bounds.Item2 - bounds.Item1);
             spring.setBreakForce(breakforce);
-            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(breakforce * 100f) / 100f);
+            inputFields[idx].SetTextWithoutNotify("" + Math.Round(breakforce * 100f) / 100f);
         }
     }
 
     public void fieldValueChange(int idx)
     {
-        float value;
+        double val;
         string text = inputFields[idx].text;
-        
-        if (!float.TryParse(text, out value)) { return; }
+        if (text == "") val = 0;
+        else if (!double.TryParse(text, out val)) { return; }
 
         if (idx == 0)
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             rbcurr.mass = value;
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1)/bounds.Item2);
-            if (text == "" || text[text.Length-1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            if ((text[text.Length-1] != '.' && text[text.Length - 1] != '0')||(text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
         else if (idx == 1)
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 100f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             float length = value;
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(length / Util.FixedRectWidthMultiplier, transcurr.localScale.y);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(length / Util.MoveableRectWidthMultiplier, transcurr.localScale.y);
             sliders[idx].SetValueWithoutNotify((length - bounds.Item1) / bounds.Item2);
-            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(length * 100f) / 100f);
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(length * 100f) / 100f);
         }
         else if (idx == 2)
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 100f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             float width = value;
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.FixedRectHeightMultiplier);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.MoveableRectHeightMultiplier);
             sliders[idx].SetValueWithoutNotify((width - bounds.Item1)/bounds.Item2);
-            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(width * 100f) / 100f);
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(width * 100f) / 100f);
         }
         else if(idx == 3) //circle
         {
-            (float, float) bounds = (0f, 100f);
+            (float, float) bounds = (0.01f, 100f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             transcurr.localScale = new v2(value, value);
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1)/bounds.Item2);
-            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
         else if (idx == 4)
         {
-            (float, float) bounds = (0.01f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             SpringControl spring = focused.GetComponent<SpringControl>();
             spring.setSpringConstant(value);
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
-            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
         else if (idx == 5)
         {
             (float, float) bounds = (0.01f, 1000f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             ForceControl force = focused.GetComponent<ForceControl>();
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
             force.setForce(value);
             //sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
             //inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
         else if (idx == 6)
         {
-            (float, float) bounds = (0.01f, 1000f);
+            (float, float) bounds = (0.01f, 100f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             VelocityControl velocity = focused.GetComponent<VelocityControl>();
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
             velocity.setSpeed(value);
         }
         else if (idx == 7)
         {
-            (float, float) bounds = (0f, 359f);
+            (float, float) bounds = (0.01f, 359f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
-            if (namecurr == "Force") this.focused.GetComponent<ForceControl>().setAngle(value);
-            else if (namecurr == "Velocity") this.focused.GetComponent<VelocityControl>().setAngle(value);
+            if (namecurr == "Force")
+            {
+                if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+                this.focused.GetComponent<ForceControl>().setAngle(value);
+            }
+            else if (namecurr == "Velocity")
+            {
+                if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+                this.focused.GetComponent<VelocityControl>().setAngle(value);
+            }
             else
             {
                 transcurr.localEulerAngles = new v3(0, 0, value);
                 sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
-                if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+                if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
             }
         }
         else if (idx == 8) //equilibrium length
         {
             (float, float) bounds = (0.01f, 100f);
+            float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             SpringControl spring = focused.GetComponent<SpringControl>();
             spring.setElength(value);
             sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
-            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
         }
         else if (idx == 9) //break force (N)
         {
-            (float, float) bounds = (0f, 100f);
+            (double, double) bounds = (0.01, 99999999);
             SpringControl spring = focused.GetComponent<SpringControl>();
-            value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
-            spring.setBreakForce(value);
-            sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
-            if (text == "" || text[text.Length - 1] != '.') inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+            double breakforce = Math.Max(Math.Min(val, bounds.Item2), bounds.Item1);
+            spring.setBreakForce(breakforce);
+            sliders[idx].SetValueWithoutNotify((float)((breakforce - bounds.Item1) / bounds.Item2));
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Math.Round(breakforce * 100f) / 100f);
         }
     }
 

@@ -30,14 +30,17 @@ public class RotateResizeable : MonoBehaviour
         {
             if (Input.touchCount == 1)
             {
-                touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 screenpos = Input.mousePosition;
+                screenpos.z = 0;
+                touchStart = Camera.main.ScreenToWorldPoint(screenpos);
                 touchStart.z = 0;
-                if (col.bounds.Contains(touchStart))
+                if (Util.ColliderContains(col, touchStart, 0) && Util.OnCanvas(screenpos))
                 {
                     onSprite = true;
                     PropertiesEditable.focusedObject = this.gameObject;
                     touchStart.z = 0;
                     Util.objectDragged = true;
+                    Util.draggedObject = this.gameObject;
                     ReplayControl.focusedObject = this.gameObject;
                 }
             }
@@ -57,6 +60,7 @@ public class RotateResizeable : MonoBehaviour
             {
                 onSprite = false;
                 Util.objectDragged = false;
+                Util.draggedObject = null;
             }
             lastTouchCnt = 1;
         }

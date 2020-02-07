@@ -10,8 +10,6 @@ public class Destructable : MonoBehaviour
     {
         foreach (GameObject each in objects)
         {
-            PropertiesEditable temp = each.GetComponent<PropertiesEditable>();
-            if (temp != null) temp.Destruct();
             Destroy(each);
         }
         objects.Clear();
@@ -26,8 +24,6 @@ public class Destructable : MonoBehaviour
     {
         objects.Remove(this.gameObject);
         //deletes the generated lines and labels
-        PropertiesEditable temp = this.gameObject.GetComponent<PropertiesEditable>();
-        if (temp != null) temp.Destruct();
         Destroy(this.gameObject);
     }
 }

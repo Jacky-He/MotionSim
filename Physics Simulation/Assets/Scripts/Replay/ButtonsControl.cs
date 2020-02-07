@@ -6,20 +6,20 @@ using UnityEngine.UI;
 public class ButtonsControl : MonoBehaviour
 {
     private static bool playState = false;
-    private GameObject playButton;
-    private GameObject stopButton;
-    private GameObject replayButton;
-    private GameObject clearButton;
-    private GameObject leftBackButton;
-    private GameObject rightBackButton;
-    private GameObject objectsControlArea;
-    private GameObject propertiesControlArea;
-    private GameObject gravityButton;
-    private GameObject gravityCheckBox;
+    private static GameObject playButton;
+    private static GameObject stopButton;
+    private static GameObject replayButton;
+    private static GameObject clearButton;
+    private static GameObject leftBackButton;
+    private static GameObject rightBackButton;
+    private static GameObject objectsControlArea;
+    private static GameObject propertiesControlArea;
+    private static GameObject gravityButton;
+    private static GameObject gravityCheckBox;
     private Animator objectsControlAreaAnimator;
     private Animator propertiesControlAreaAnimator;
 
-    private GameObject earthImage;
+    private static GameObject earthImage;
 
     [SerializeField] private Sprite checkedBoxSprite;
     [SerializeField] private Sprite uncheckedBoxSprite;
@@ -31,7 +31,7 @@ public class ButtonsControl : MonoBehaviour
         replayButton.SetActive(false);
         clearButton.SetActive(false);
         playState = !playState;
-        ReplayControl.touchable = false;
+        //ReplayControl.touchable = false;
         //if not playing anymore, set everything to original position;
         if (!playState)
         {
@@ -40,6 +40,7 @@ public class ButtonsControl : MonoBehaviour
             ReplayControl.recording = false;
             ReplayControl.resetting = true;
             ReplayControl.controlledByAnim = true;
+            ReplayControl.touchable = true;
         }
         else
         {
@@ -50,6 +51,7 @@ public class ButtonsControl : MonoBehaviour
             ReplayControl.sliderReplaying = false;
             ReplayControl.recording = true;
             ReplayControl.controlledByAnim = false;
+            ReplayControl.touchable = false;
         }
         //start the physics simulation;
     }
@@ -62,8 +64,20 @@ public class ButtonsControl : MonoBehaviour
         ReplayControl.controlledByAnim = true;
         replayButton.SetActive(true);
         clearButton.SetActive(true);
+        ReplayControl.totalPointsCnt = 0;
     }
-    
+
+    public static void StaticStop ()
+    {
+        ReplayControl.recording = false;
+        ReplayControl.sliderReplaying = true;
+        ReplayControl.replaying = false;
+        ReplayControl.controlledByAnim = true;
+        replayButton.SetActive(true);
+        clearButton.SetActive(true);
+        ReplayControl.totalPointsCnt = 0;
+    }
+
     public void OnClickReplay()
     {
         ReplayControl.sliderReplaying = false;
@@ -112,6 +126,7 @@ public class ButtonsControl : MonoBehaviour
             objectsControlAreaAnimator = objectsControlArea.GetComponent<Animator>();
             propertiesControlAreaAnimator = propertiesControlArea.GetComponent<Animator>();
             earthImage = GameObject.Find("EarthImage");
+            //Debug.Log(earthImage);
         }
     }
 

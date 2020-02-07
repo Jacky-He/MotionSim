@@ -61,11 +61,6 @@ public class Measurement : MonoBehaviour
         }
     }
 
-    public void Destruct()
-    {
-        for (int i = 0; i < 2; i++) foreach (rtm each in rtms[i]) Destroy(each.gameObject);
-    }
-
     public void setActive(bool val)
     {
         for (int i = 0; i < 2; i++) foreach (rtm each in rtms[i]) each.gameObject.SetActive(val);
@@ -175,5 +170,10 @@ public class Measurement : MonoBehaviour
         t.fontSize = 30;
         t.alignment = TextAnchor.MiddleCenter;
         rtms[idx][4].eulerAngles = new v3(0, 0, 0);
+    }
+
+    private void OnDestroy()
+    {
+        for (int i = 0; i < 2; i++) foreach (rtm each in rtms[i]) if (each != null) Destroy(each.gameObject);
     }
 }

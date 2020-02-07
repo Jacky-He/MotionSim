@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 177975242884068424}
   - component: {fileID: 5662268849938729284}
   - component: {fileID: 5669240546021805034}
-  m_Layer: 2
+  m_Layer: 8
   m_Name: Force
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 2431105151485147043}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 303.6592, y: 39.093742, z: -204.70155}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0

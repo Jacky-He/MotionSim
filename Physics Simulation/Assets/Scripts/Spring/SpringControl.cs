@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SpringControl : MonoBehaviour
 {
@@ -201,11 +202,15 @@ public class SpringControl : MonoBehaviour
         for (int x = 0; x < 2; x++)
         {
             SpringJoint2D joint = joints[x];
-            if (joint != null)
+            if (joint != null && joint.enabled)
             {
+                totalmass = joint.attachedRigidbody.mass + joint.connectedBody.mass;
+                massproduct = joint.attachedRigidbody.mass * joint.connectedBody.mass;
+                if (Mathf.Abs(joint.attachedRigidbody.mass) < Util.EPSILON_SMALL || Mathf.Abs(joint.connectedBody.mass) < Util.EPSILON_SMALL) onemass = true;
+
                 joint.autoConfigureConnectedAnchor = false;
                 joint.autoConfigureDistance = false;
-                joint.frequency = 1f;
+                joint.frequency = this.frequency * 1.4f;
                 joint.dampingRatio = 0f;
                 joint.enableCollision = true;
                 joint.distance = this.elength;
@@ -233,13 +238,16 @@ public class SpringControl : MonoBehaviour
         {
             if (Input.touchCount == 1)
             {
-                touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 screenpos = Input.mousePosition;
+                screenpos.z = 0;
+                touchStart = Camera.main.ScreenToWorldPoint(screenpos);
                 touchStart.z = 0;
-                if (col.bounds.Contains(touchStart))
+                if (Util.ColliderContains(col, touchStart, 8) && Util.OnCanvas(screenpos))
                 {
                     onSprite = true;
                     PropertiesEditable.focusedObject = this.gameObject;
                     Util.objectDragged = true;
+                    Util.draggedObject = this.gameObject;
                     touchAbove = Above(touchStart);
                 }
             }
@@ -259,6 +267,7 @@ public class SpringControl : MonoBehaviour
                 if (onSprite) UpdateEndPoints();
                 onSprite = false;
                 Util.objectDragged = false;
+                Util.draggedObject = null;
             }
             lastTouchCnt = 1;
         }
@@ -287,6 +296,11 @@ public class SpringControl : MonoBehaviour
             }
 
             lastTouchCnt = 2;
+        }
+        else if (Input.touchCount == 1)
+        {
+            if (Input.GetMouseButton(0)) FindNearestNotSelected();
+            if (Input.GetMouseButtonUp(0)) UpdateEndPointsNotSelected();
         }
     }
 
@@ -387,17 +401,74 @@ public class SpringControl : MonoBehaviour
         }
     }
 
+    void UpdateEndPointsNotSelected()
+    {
+        if (tentative1 == null) disableEndPoint1();
+        else
+        {
+            GameObject go = tentative1.gameObject;
+            Vector3 worldpoint = go.transform.position + Util.RotateAroundOrigin(tentative1.translate, go.transform.localEulerAngles.z);
+            if (endPoint2 == null) attachPoint2 += worldpoint - attachPoint1;
+            attachPoint1 = worldpoint;
+            setEndPoint1(tentative1.gameObject, tentative1.translate);
+        }
+
+        if (tentative2 == null) disableEndPoint2();
+        else
+        {
+            GameObject go = tentative2.gameObject;
+            Vector3 worldpoint = go.transform.position + Util.RotateAroundOrigin(tentative2.translate, go.transform.localEulerAngles.z);
+            if (endPoint1 == null) attachPoint1 += worldpoint - attachPoint2;
+            attachPoint2 = worldpoint;
+            setEndPoint2(tentative2.gameObject, tentative2.translate);
+        }
+        Attachable.focused = null;
+    }
+
+    void FindNearestNotSelected()
+    {
+        RaycastHit2D hit;
+        int layerMask = (1 << 0); //default layer
+
+        hit = Physics2D.Raycast(attachPoint1, trans.TransformDirection(Vector3.up), height / 2, layerMask);
+        Debug.DrawRay(attachPoint1, trans.TransformDirection(Vector3.up) * height / 2, Color.green);  // draw the debug;
+
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject == Util.draggedObject)
+            {
+                Transform gotrans = hit.collider.gameObject.GetComponent<Transform>();
+                Vector3 translate = Util.RotateAroundOrigin(new Vector3(hit.point.x, hit.point.y) - gotrans.position, -gotrans.eulerAngles.z);
+                SetTentative1(hit.collider.gameObject, translate);
+            }
+        }
+        else DismissTentative1();
+
+        hit = Physics2D.Raycast(attachPoint2, trans.TransformDirection(Vector3.down), height / 2, layerMask);
+        Debug.DrawRay(attachPoint2, trans.TransformDirection(Vector3.down) * height / 2, Color.green);
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject == Util.draggedObject)
+            {
+                Transform gotrans = hit.collider.gameObject.GetComponent<Transform>();
+                Vector3 translate = Util.RotateAroundOrigin(new Vector3(hit.point.x, hit.point.y) - gotrans.position, -gotrans.eulerAngles.z);
+                SetTentative2(hit.collider.gameObject, translate);
+            }
+        }
+        else DismissTentative2();
+    }
+
     void DismissTentative1()
     {
-        Attachable.focused = null;
         if (tentative1 == null) return;
+        Attachable.focused = null;
         tentative1 = null;
     }
 
     void DismissTentative2 ()
     {
-        Attachable.focused = null;
         if (tentative2 == null) return;
+        Attachable.focused = null;
         tentative2 = null;
     }
 
@@ -428,6 +499,13 @@ public class SpringControl : MonoBehaviour
         }
     }
 
+
+    private void OnDestroy()
+    {
+        this.disableEndPoint1();
+        this.disableEndPoint2();
+    }
+
     private void FixedUpdate()
     {
         if (ReplayControl.touchable) return;
@@ -436,8 +514,11 @@ public class SpringControl : MonoBehaviour
             SpringJoint2D joint = joints[i];
             if (joint != null && joint.enabled)
             {
-                double x = this.getSpringLength() - this.elength;
-                double k = this.springConstant;
+                float springLength = this.getSpringLength();
+                float x = springLength - this.elength;
+                float k = this.springConstant;
+
+                if (Math.Abs((double)x * (double)k) >= breakforce) this.gameObject.GetComponent<Destructable>().Destruct();
 
                 Vector3 dirup = this.trans.TransformDirection(Vector3.up).normalized;
                 Vector3 dirdown = this.trans.TransformDirection(Vector3.down).normalized;
@@ -449,39 +530,58 @@ public class SpringControl : MonoBehaviour
                     joint.attachedRigidbody.AddForce(reactionForce);
                     joint.connectedBody.AddForce(-1f * reactionForce);
                     
-                    joint.attachedRigidbody.AddForce((float)(-k * x) * dirup, ForceMode2D.Force);
-                    joint.connectedBody.AddForce((float)(-k * x) * dirdown, ForceMode2D.Force);
+                    joint.attachedRigidbody.AddForce((-k * x) * dirup, ForceMode2D.Force);
+                    joint.connectedBody.AddForce((-k * x) * dirdown, ForceMode2D.Force);
                 }
                 else if (endPoint1.gameObject == joint.connectedBody.gameObject)
                 {
                     joint.attachedRigidbody.AddForce(reactionForce);
                     joint.connectedBody.AddForce(-1f * reactionForce);
 
-                    joint.connectedBody.AddForce((float)(-k * x) * dirup, ForceMode2D.Force);
-                    joint.attachedRigidbody.AddForce((float)(-k * x) * dirdown, ForceMode2D.Force);
+                    joint.connectedBody.AddForce((-k * x) * dirup, ForceMode2D.Force);
+                    joint.attachedRigidbody.AddForce((-k * x) * dirdown, ForceMode2D.Force);
                 }
+                configureJoints();
             }
         }
     }
 
     //MARK: Properties Control
     private float springConstant = 2f; //N/m
-    private float breakforce = 50f; //N
-    private float elength = 4f; //metres
+    private double breakforce = 100f; //N
+    private float elength = 3f; //metres
+
+    //private (float, float) boundsfrequency = (1f, 1.5f);
+    //private (float, float) boundsconstant = (2f, 100f);
+    private float totalmass = 0f;
+    private float massproduct = 0f;
+    private bool onemass = false;
+    //2: 0.1, 100: 2
+    //m = (2 - 1)/(100 - 2)
+    //
+    private float frequency
+    {
+        get
+        {
+            if (Math.Abs(totalmass) < Util.EPSILON_SMALL) return 1f;
+            if (onemass)
+            {
+                return Mathf.Sqrt(springConstant / totalmass) / (2f * Mathf.PI);
+            }
+            return Mathf.Sqrt(springConstant * totalmass / massproduct) / (2f * Mathf.PI);
+        }
+    }
 
     public void setSpringConstant (float constant) { this.springConstant = constant; }
     public float getSpringConstant () { return this.springConstant; }
 
-    public double getSpringLength()
+    public float getSpringLength()
     {
-        Vector3 diff = attachPoint2 - attachPoint1;
-        double xdir = diff.x;
-        double ydir = diff.y;
-        return Math.Sqrt(xdir * xdir + ydir * ydir);
+        return (attachPoint2 - attachPoint1).magnitude;
     }
 
-    public void setBreakForce(float breakforce) { this.breakforce = breakforce; configureJoints(); }
-    public float getBreakForce() { return this.breakforce; }
+    public void setBreakForce(double breakforce) { this.breakforce = breakforce; configureJoints(); }
+    public double getBreakForce() { return this.breakforce; }
     public void setElength(float elength) { this.elength = elength; configureJoints(); }
     public float getElength () { return this.elength; }
     public bool available () { return endPoint1 == null && endPoint2 == null;} 
