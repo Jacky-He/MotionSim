@@ -26,6 +26,8 @@ public class GraphControl : MonoBehaviour
     private float xMax = 0f;
     private float xMin = 0f;
 
+    private AudioSource buttonAudio;
+
     private GraphButtons buttonAccelerationX;
     private GraphButtons buttonAccelerationY;
     private GraphButtons buttonVelocityX;
@@ -77,6 +79,7 @@ public class GraphControl : MonoBehaviour
         buttonVelocityY = GameObject.Find("VelocityY").GetComponent<GraphButtons>();
         buttonPositionX = GameObject.Find("DisplacementX").GetComponent<GraphButtons>();
         buttonPositionY = GameObject.Find("DisplacementY").GetComponent<GraphButtons>();
+        buttonAudio = GameObject.Find("ButtonClickAudioSource").GetComponent<AudioSource>();
         graphHeight = graphContainer.rect.height;
         graphWidth = graphContainer.rect.width;
 
@@ -338,6 +341,7 @@ public class GraphControl : MonoBehaviour
         if (PropertiesControlAreaScript.focusedObject == null) return;
         ReplayControl rc = PropertiesControlAreaScript.focusedObject.GetComponent<ReplayControl>();
         if (rc == null) return;
+        buttonAudio.Play();
         buttonAccelerationX.SetSelected(!buttonAccelerationX.selected);
         if (buttonAccelerationX.selected) rc.graphOptions.Add(GraphOptions.accelerationX);
         else rc.graphOptions.Remove(GraphOptions.accelerationX);
@@ -348,6 +352,7 @@ public class GraphControl : MonoBehaviour
         if (PropertiesControlAreaScript.focusedObject == null) return;
         ReplayControl rc = PropertiesControlAreaScript.focusedObject.GetComponent<ReplayControl>();
         if (rc == null) return;
+        buttonAudio.Play();
         buttonAccelerationY.SetSelected(!buttonAccelerationY.selected);
         if (buttonAccelerationY.selected) rc.graphOptions.Add(GraphOptions.accelerationY);
         else rc.graphOptions.Remove(GraphOptions.accelerationY);
@@ -358,6 +363,7 @@ public class GraphControl : MonoBehaviour
         if (PropertiesControlAreaScript.focusedObject == null) return;
         ReplayControl rc = PropertiesControlAreaScript.focusedObject.GetComponent<ReplayControl>();
         if (rc == null) return;
+        buttonAudio.Play();
         buttonVelocityX.SetSelected(!buttonVelocityX.selected);
         if (buttonVelocityX.selected) rc.graphOptions.Add(GraphOptions.velocityX);
         else rc.graphOptions.Remove(GraphOptions.velocityX);
@@ -368,6 +374,7 @@ public class GraphControl : MonoBehaviour
         if (PropertiesControlAreaScript.focusedObject == null) return;
         ReplayControl rc = PropertiesControlAreaScript.focusedObject.GetComponent<ReplayControl>();
         if (rc == null) return;
+        buttonAudio.Play();
         buttonVelocityY.SetSelected(!buttonVelocityY.selected);
         if (buttonVelocityY.selected) rc.graphOptions.Add(GraphOptions.velocityY);
         else rc.graphOptions.Remove(GraphOptions.velocityY);
@@ -378,6 +385,7 @@ public class GraphControl : MonoBehaviour
         if (PropertiesControlAreaScript.focusedObject == null) return;
         ReplayControl rc = PropertiesControlAreaScript.focusedObject.GetComponent<ReplayControl>();
         if (rc == null) return;
+        buttonAudio.Play();
         buttonPositionX.SetSelected(!buttonPositionX.selected);
         if (buttonPositionX.selected) rc.graphOptions.Add(GraphOptions.positionX);
         else rc.graphOptions.Remove(GraphOptions.positionX);
@@ -388,6 +396,7 @@ public class GraphControl : MonoBehaviour
         if (PropertiesControlAreaScript.focusedObject == null) return;
         ReplayControl rc = PropertiesControlAreaScript.focusedObject.GetComponent<ReplayControl>();
         if (rc == null) return;
+        buttonAudio.Play();
         buttonPositionY.SetSelected(!buttonPositionY.selected);
         if (buttonPositionY.selected) rc.graphOptions.Add(GraphOptions.positionY);
         else rc.graphOptions.Remove(GraphOptions.positionY);

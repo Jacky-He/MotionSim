@@ -239,7 +239,7 @@ public class ForceControl: MonoBehaviour
         this.trans.localEulerAngles = new Vector3 (0f, 0f, newangle);
         //configure the forces
         float prevmagnitude = force.magnitude;
-        force.magnitude = distance;
+        force.magnitude = distance * 5f;
 
         force.normalizedDirection = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), Mathf.Sin(Mathf.Deg2Rad * angle)).normalized;
         if (!(Mathf.Abs(prevmagnitude - force.magnitude) < Util.EPSILON)) propertiesAreaScript.CoerceAdjustValues(5);
@@ -248,7 +248,7 @@ public class ForceControl: MonoBehaviour
 
     public void setForce (float newtons)
     {
-        float distance = newtons;
+        float distance = newtons / 5f;
         attachPoint1 = attachPoint2 + distance * force.normalizedDirection;
     }
 

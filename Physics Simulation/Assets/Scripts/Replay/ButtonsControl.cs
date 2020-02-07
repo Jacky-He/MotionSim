@@ -16,6 +16,7 @@ public class ButtonsControl : MonoBehaviour
     private static GameObject propertiesControlArea;
     private static GameObject gravityButton;
     private static GameObject gravityCheckBox;
+    private static AudioSource buttonClickAudio;
     private Animator objectsControlAreaAnimator;
     private Animator propertiesControlAreaAnimator;
 
@@ -28,6 +29,7 @@ public class ButtonsControl : MonoBehaviour
 
     public void OnClickPlay ()
     {
+        buttonClickAudio.Play();
         replayButton.SetActive(false);
         clearButton.SetActive(false);
         playState = !playState;
@@ -58,6 +60,7 @@ public class ButtonsControl : MonoBehaviour
 
     public void OnClickStop ()
     {
+        buttonClickAudio.Play();
         ReplayControl.recording = false;
         ReplayControl.sliderReplaying = true;
         ReplayControl.replaying = false;
@@ -69,6 +72,7 @@ public class ButtonsControl : MonoBehaviour
 
     public static void StaticStop ()
     {
+        buttonClickAudio.Play();
         ReplayControl.recording = false;
         ReplayControl.sliderReplaying = true;
         ReplayControl.replaying = false;
@@ -80,12 +84,14 @@ public class ButtonsControl : MonoBehaviour
 
     public void OnClickReplay()
     {
+        buttonClickAudio.Play();
         ReplayControl.sliderReplaying = false;
         ReplayControl.replaying = true;
     }
 
     public void OnClickClear()
     {
+        buttonClickAudio.Play();
         ReplayControl.touchable = true;
         //starts Clearing stuff
         Destructable.ClearAll();
@@ -126,6 +132,7 @@ public class ButtonsControl : MonoBehaviour
             objectsControlAreaAnimator = objectsControlArea.GetComponent<Animator>();
             propertiesControlAreaAnimator = propertiesControlArea.GetComponent<Animator>();
             earthImage = GameObject.Find("EarthImage");
+            buttonClickAudio = GameObject.Find("ButtonClickAudioSource").GetComponent<AudioSource>();
             //Debug.Log(earthImage);
         }
     }
@@ -145,6 +152,7 @@ public class ButtonsControl : MonoBehaviour
     //Other Buttons
     public void OnClickLeftBack()
     {
+        //buttonClickAudio.Play();
         //animation
         bool isShowing = ObjectsControlScript.objectsControlAreaShowing;
         if (isShowing)
@@ -175,6 +183,7 @@ public class ButtonsControl : MonoBehaviour
 
     public void OnClickRightBack()
     {
+        //buttonClickAudio.Play();
         bool isShowing = PropertiesControlAreaScript.propertiesControlAreaShowing;
         if (isShowing)
         {
@@ -205,6 +214,7 @@ public class ButtonsControl : MonoBehaviour
 
     public void OnClickGravity()
     {
+        buttonClickAudio.Play();
         GravityAffectable.gravityPresent = !GravityAffectable.gravityPresent;
         if (GravityAffectable.gravityPresent)
         {
@@ -216,6 +226,7 @@ public class ButtonsControl : MonoBehaviour
             gravityCheckBox.GetComponent<Image>().sprite = uncheckedBoxSprite;
             earthImage.SetActive(false);
         }
+
     }
 
     public void OnClickGraphTab ()

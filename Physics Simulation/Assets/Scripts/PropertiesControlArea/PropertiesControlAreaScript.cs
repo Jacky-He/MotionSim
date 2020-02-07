@@ -19,6 +19,7 @@ public class PropertiesControlAreaScript : MonoBehaviour
     private go propertiesarea;
     private go graphTab;
     private go propertiesTab;
+    private AudioSource buttonAudio;
 
     private GraphControl gc;
 
@@ -79,11 +80,14 @@ public class PropertiesControlAreaScript : MonoBehaviour
         canvas = go.Find("Canvas");
         propertiesControlArea = go.Find("PropertiesControlArea");
         propertiesControlAreaRTM = propertiesControlArea.GetComponent<rtm>();
+        buttonAudio = go.Find("ButtonClickAudioSource").GetComponent<AudioSource>();
     }
 
     public void OnClickGraphTab()
     {
         if (graph) return;
+        if(buttonAudio != null) buttonAudio.Play();
+
         graph = true;
         graphTab.transform.SetAsLastSibling();
         graphTab.GetComponent<Image>().color = Util.GraphTabOnColor;
@@ -99,6 +103,8 @@ public class PropertiesControlAreaScript : MonoBehaviour
     public void OnClickPropertiesTab()
     {
         if (!graph) return;
+        if (buttonAudio != null) buttonAudio.Play();
+
         graph = false;
         propertiesTab.transform.SetAsLastSibling();
         graphTab.GetComponent<Image>().color = Util.GraphTabOffColor;
