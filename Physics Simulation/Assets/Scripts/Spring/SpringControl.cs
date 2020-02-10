@@ -548,7 +548,7 @@ public class SpringControl : MonoBehaviour
 
     //MARK: Properties Control
     private float springConstant = 2f; //N/m
-    private double breakforce = 100f; //N
+    private double breakforce = 999999999; //N
     private float elength = 3f; //metres
 
     //private (float, float) boundsfrequency = (1f, 1.5f);

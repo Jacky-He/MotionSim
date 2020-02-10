@@ -14,7 +14,7 @@ public class GraphControl : MonoBehaviour
     private RectTransform dashTemplateX;
     private RectTransform dashTemplateY;
 
-    private static int numDataPoints = 300;
+    private static int numDataPoints = 250;
     private static int separatorCountX = 5;
     private static int separatorCountY = 10;
     private float graphHeight;

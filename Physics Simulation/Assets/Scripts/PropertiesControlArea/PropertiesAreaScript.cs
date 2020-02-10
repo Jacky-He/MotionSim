@@ -277,7 +277,7 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 9) //break force (N)
             {
-                (double, double) bounds = (0.01, 99999999);
+                (double, double) bounds = (0.01, 999999999);
                 SpringControl spring = focused.GetComponent<SpringControl>();
                 double breakforce = Math.Max(Math.Min(spring.getBreakForce(), bounds.Item2), bounds.Item1);
                 sliders[i].SetValueWithoutNotify((float)((breakforce - bounds.Item1) / bounds.Item2));
@@ -366,7 +366,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 9) //break force (N)
         {
-            (double, double) bounds = (0.01, 99999999);
+            (double, double) bounds = (0.01, 999999999);
             SpringControl spring = focused.GetComponent<SpringControl>();
             double breakforce = bounds.Item1 + value * (bounds.Item2 - bounds.Item1);
             spring.setBreakForce(breakforce);
@@ -485,7 +485,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 9) //break force (N)
         {
-            (double, double) bounds = (0.01, 99999999);
+            (double, double) bounds = (0.01, 999999999);
             SpringControl spring = focused.GetComponent<SpringControl>();
             double breakforce = Math.Max(Math.Min(val, bounds.Item2), bounds.Item1);
             spring.setBreakForce(breakforce);

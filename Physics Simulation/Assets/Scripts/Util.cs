@@ -117,12 +117,13 @@ public class Util: MonoBehaviour
 
     void Update()
     {
-        
+        Debug.Log(1.0f / Time.deltaTime);
     }
 
     private void Start()
     {
         Screen.orientation = ScreenOrientation.LandscapeLeft;
+        Application.targetFrameRate = 60;
     }
 
     private void Awake()

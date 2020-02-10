@@ -1703,7 +1703,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 945b5e1b3f6e14145a22463644025d57, type: 3}
+  m_audioClip: {fileID: 8300000, guid: fb604bbc12aa947eb8743cb86b703671, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -7525,11 +7525,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Circle
-      objectReference: {fileID: 0}
-    - target: {fileID: 4061838876547079868, guid: 8f99541df4c974e0cbcfbba800b518c2,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6149512970386134413, guid: 8f99541df4c974e0cbcfbba800b518c2,
         type: 3}

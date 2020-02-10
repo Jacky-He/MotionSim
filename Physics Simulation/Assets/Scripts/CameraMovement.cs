@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    private (float, float) zoombounds = (0.4f, 20f);
+    private (float, float) zoombounds = (0.05f, 300f);
     private (float, float) earthYShiftUnadjusted = (-6.3f, -5.3f);
     private (float, float) earthScaleFactorUnadjusted = (1.2f, 0.8f);
     private float defaultOrthographicSize = 2.5f;

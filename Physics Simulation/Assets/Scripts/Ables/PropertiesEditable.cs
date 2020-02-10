@@ -227,6 +227,7 @@ public class PropertiesEditable: MonoBehaviour
         label = obj3.GetComponent<RectTransform>();
         label.anchorMin = label.anchorMax = new v2(0f, 0f);
         label.pivot = new v2(0.5f, 0.5f);
+        label.sizeDelta = new v2(110, 110);
         label.gameObject.SetActive(false);
         displays.Add(obj3);
         Text t = label.GetComponent<Text>();
