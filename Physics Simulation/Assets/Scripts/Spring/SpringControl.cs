@@ -230,6 +230,19 @@ public class SpringControl : MonoBehaviour
     {
         if (!ReplayControl.touchable)
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (Input.touchCount == 1)
+                {
+                    Vector3 screenpos = Input.mousePosition;
+                    screenpos.z = 0;
+                    Vector3 touch = Camera.main.ScreenToWorldPoint(screenpos);
+                    touch.z = 0;
+                    col.enabled = true;
+                    if (Util.ColliderContains(col, touch, 8) && Util.OnCanvas(screenpos)) PropertiesEditable.focusedObject = this.gameObject;
+                    col.enabled = false;
+                }
+            }
             col.enabled = false;
             return;
         }

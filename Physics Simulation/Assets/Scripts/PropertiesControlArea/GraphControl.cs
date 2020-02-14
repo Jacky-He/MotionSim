@@ -210,8 +210,8 @@ public class GraphControl : MonoBehaviour
         }
 
         this.range = yMax - yMin;
-        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = yMax; } //accounts for the case of a horizontal line
-        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = 10f; } //if yMax happens to be zero
+        if (Math.Abs(range) < Util.EPSILON_ULTRA_SMALL) { this.range = yMax; } //accounts for the case of a horizontal line
+        if (Math.Abs(range) < Util.EPSILON_ULTRA_SMALL) { this.range = 10f; } //if yMax happens to be zero
         yMax += this.range * 0.1f;
         yMin -= this.range * 0.1f;
         this.range = yMax - yMin;
@@ -258,8 +258,8 @@ public class GraphControl : MonoBehaviour
         }
 
         this.range = yMax - yMin;
-        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = yMax; } //accounts for the case of a horizontal line
-        if (Math.Abs(range) < Util.EPSILON_SMALL) { this.range = 10f; } //if yMax happens to be zero
+        if (Math.Abs(range) < Util.EPSILON_ULTRA_SMALL) { this.range = yMax; } //accounts for the case of a horizontal line
+        if (Math.Abs(range) < Util.EPSILON_ULTRA_SMALL) { this.range = 10f; } //if yMax happens to be zero
         yMax += this.range * 0.1f;
         yMin -= this.range * 0.1f;
         this.range = yMax - yMin;

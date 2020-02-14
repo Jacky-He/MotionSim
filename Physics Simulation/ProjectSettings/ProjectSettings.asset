@@ -166,8 +166,9 @@ PlayerSettings:
   applicationIdentifier:
     Standalone: com.Company.ProductName
     iPhone: com.heja.motionsim
-  buildNumber: {}
-  AndroidBundleVersionCode: 2
+  buildNumber:
+    iPhone: 3
+  AndroidBundleVersionCode: 3
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1

@@ -31,6 +31,7 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
             VelocityControl velocity = newObj.GetComponent<VelocityControl>();
             PropertiesEditable edit = newObj.GetComponent<PropertiesEditable>();
             ReplayControl replay = newObj.GetComponent<ReplayControl>();
+            Name name = newObj.GetComponent<Name>();
             if (spring != null) //if this is a spring
             {
                 spring.attachPoint1 = worldPos + new Vector3(0, SpringControl.defaultHeight / 2f, 0);
@@ -48,6 +49,14 @@ public class ObjectDropHandler : MonoBehaviour, IDropHandler
             }
             if (replay != null) ReplayControl.focusedObject = newObj;
             if (edit != null) PropertiesEditable.focusedObject = newObj;
+            //if (name.objectname == "FixedRectangle" || name.objectname == "MoveableRectangle" || name.objectname == "Circle")
+            //{
+            //    Collider2D col = newObj.GetComponent<Collider2D>();
+            //    PhysicsMaterial2D material = new PhysicsMaterial2D();
+            //    material.friction = 0.4f;
+            //    material.bounciness = 0.4f;
+            //    col.sharedMaterial = material;
+            //}
         }
         //otherwise do nothing;
     }

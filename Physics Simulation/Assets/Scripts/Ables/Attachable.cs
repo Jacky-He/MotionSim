@@ -14,6 +14,7 @@ public class Attachable : MonoBehaviour
 
     public HashSet<Force> forces = new HashSet<Force>();
     public HashSet<Velocity> velocities = new HashSet<Velocity>();
+    public static HashSet<Collider2D> objectsCols = new HashSet<Collider2D>();
 
     bool flag = false;
 
@@ -23,8 +24,14 @@ public class Attachable : MonoBehaviour
         
     }
 
+    private void OnDestroy()
+    {
+        objectsCols.Remove(this.gameObject.GetComponent<Collider2D>());
+    }
+
     private void Awake()
     {
+        objectsCols.Add(this.gameObject.GetComponent<Collider2D>());
         trans = this.GetComponent<Transform>();
         rb = this.GetComponent<Rigidbody2D>();
         //tree.Insert(trans);
@@ -71,6 +78,18 @@ public class Attachable : MonoBehaviour
     {
         if (focused == this) this.gameObject.GetComponent<SpriteRenderer>().color = Util.shadedColor;
         else this.gameObject.GetComponent<SpriteRenderer>().color = Util.unshadedColor;
+    }
+
+    public static void ResetAllColliders ()
+    {
+        foreach (Collider2D col in objectsCols)
+        {
+            if (col != null)
+            {
+                col.enabled = false;
+                col.enabled = true;
+            }
+        }
     }
 
     public void ShowSelected()

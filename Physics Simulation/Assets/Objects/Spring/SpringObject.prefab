@@ -99,6 +99,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fccd4da7a452467db8aa6d442be7244, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  index: 0
-  spacing: 0
   spritePreFab: {fileID: 0}
+  selfCopy: {fileID: 0}

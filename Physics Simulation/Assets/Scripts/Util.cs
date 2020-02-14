@@ -18,6 +18,7 @@ public class Util: MonoBehaviour
     public static GameObject draggedObject = null;
     public static float EPSILON = 0.00001f;
     public static float EPSILON_SMALL = 0.001f;
+    public static float EPSILON_ULTRA_SMALL = 0.015f;
 
     public static float FixedRectWidthMultiplier = 1f;
     public static float FixedRectHeightMultiplier = 0.636595f;
@@ -117,13 +118,14 @@ public class Util: MonoBehaviour
 
     void Update()
     {
-        Debug.Log(1.0f / Time.deltaTime);
+        //Debug.Log(1.0f / Time.deltaTime);
     }
 
     private void Start()
     {
         Screen.orientation = ScreenOrientation.LandscapeLeft;
         Application.targetFrameRate = 60;
+        Physics2D.IgnoreLayerCollision(8, 8);
     }
 
     private void Awake()

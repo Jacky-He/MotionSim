@@ -12,9 +12,9 @@ using System;
 public class PropertiesAreaScript: MonoBehaviour
 {
 
-    private const int numProperties = 10;
+    private const int numProperties = 11;
     //possible idea: if the force rotates with the objects then you can simulate uniform circular motion;
-    private string[] propertiesNames = new string[numProperties] { "Mass (kg)", "Length (m)", "Width (m)", "Diameter (m)", "Spring Constant (N/m)", "Force (N)", "Velocity (m/s)", "Angle (°)", "Equilibrium Length (m)", "Break Force (N)"};
+    private string[] propertiesNames = new string[numProperties] { "Mass (kg)", "Length (m)", "Width (m)", "Diameter (m)", "Spring Constant (N/m)", "Force (N)", "Speed (m/s)", "Angle (°)", "Equilibrium Length (m)", "Break Force (N)", "Coefficient of Kinetic Friction (Global)"};
 
     Text[] labels = new Text[numProperties];
     InputField[] inputFields = new InputField[numProperties];
@@ -58,9 +58,9 @@ public class PropertiesAreaScript: MonoBehaviour
     void Update()
     {
         if (namecurr == "") SetNeededProperties(0);
-        else if (namecurr == "FixedRectangle") SetNeededProperties((1 << 1) + (1 << 2) + (1 << 7));
-        else if (namecurr == "MoveableRectangle") SetNeededProperties(1 + (1 << 1) + (1 << 2) + (1 << 7));
-        else if (namecurr == "Circle") SetNeededProperties(1 + (1 << 3));
+        else if (namecurr == "FixedRectangle") SetNeededProperties((1 << 1) + (1 << 2) + (1 << 7) + (1 << 10));
+        else if (namecurr == "MoveableRectangle") SetNeededProperties(1 + (1 << 1) + (1 << 2) + (1 << 7) + (1 << 10));
+        else if (namecurr == "Circle") SetNeededProperties(1 + (1 << 3) + (1 << 10));
         else if (namecurr == "Force") SetNeededProperties((1 << 5) + (1 << 7));
         else if (namecurr == "Velocity") SetNeededProperties((1 << 6) + (1 << 7));
         else if (namecurr == "Spring") SetNeededProperties((1 << 4) + (1 << 8) + (1 << 9));
@@ -162,23 +162,26 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (i == 7)
         {
-            (float, float) bounds = (0.01f, 359f);
+            (float, float) bounds = (0f, 360f);
+            float angle;
             if (namecurr == "Force")
             {
                 ForceControl force = focused.GetComponent<ForceControl>();
                 if (force == null) return;
-                float angle = Mathf.Clamp(force.getAngle(), bounds.Item1, bounds.Item2);
-                sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
-                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
+                angle = Mathf.Clamp(force.getAngle(), bounds.Item1, bounds.Item2);
             }
             else if (namecurr == "Velocity")
             {
                 VelocityControl velocity = focused.GetComponent<VelocityControl>();
                 if (velocity == null) return;
-                float angle = Mathf.Clamp(velocity.getAngle(), bounds.Item1, bounds.Item2);
-                sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
-                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
+                angle = Mathf.Clamp(velocity.getAngle(), bounds.Item1, bounds.Item2);
             }
+            else
+            {
+                angle = Mathf.Clamp(transcurr.localEulerAngles.z, bounds.Item1, bounds.Item2);
+            }
+            sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
+            inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
         }
         else if (i == 8) //spring equilibrium length
         {
@@ -199,7 +202,7 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 1)
             {
-                (float, float) bounds = (0.01f, 100f);
+                (float, float) bounds = (0.01f, 1000f);
                 float length = 0f;
                 if (namecurr == "FixedRectangle") length = transcurr.localScale.x * Util.FixedRectWidthMultiplier;
                 else if (namecurr == "MoveableRectangle") length = transcurr.localScale.x * Util.MoveableRectWidthMultiplier;
@@ -208,7 +211,7 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 2)
             {
-                (float, float) bounds = (0.01f, 100f);
+                (float, float) bounds = (0.01f, 1000f);
                 float width = 0f;
                 if (namecurr == "FixedRectangle") width = transcurr.localScale.y * Util.FixedRectHeightMultiplier;
                 else if (namecurr == "MoveableRectangle") width = transcurr.localScale.y * Util.MoveableRectHeightMultiplier;
@@ -248,7 +251,7 @@ public class PropertiesAreaScript: MonoBehaviour
             }
             else if (i == 7)
             {
-                (float, float) bounds = (0.01f, 359f);
+                (float, float) bounds = (0f, 360f);
                 float angle = transcurr.localEulerAngles.z;
                 if (namecurr == "Force")
                 {
@@ -261,6 +264,10 @@ public class PropertiesAreaScript: MonoBehaviour
                     VelocityControl velocity = focused.GetComponent<VelocityControl>();
                     if (velocity == null) return;
                     angle = Mathf.Clamp(velocity.getAngle(), bounds.Item1, bounds.Item2);
+                }
+                else
+                {
+                    angle = Mathf.Clamp (transcurr.localEulerAngles.z, bounds.Item1, bounds.Item2);
                 }
                 sliders[i].SetValueWithoutNotify((angle - bounds.Item1) / bounds.Item2);
                 inputFields[i].SetTextWithoutNotify("" + Mathf.Round(angle * 100f) / 100f);
@@ -283,6 +290,27 @@ public class PropertiesAreaScript: MonoBehaviour
                 sliders[i].SetValueWithoutNotify((float)((breakforce - bounds.Item1) / bounds.Item2));
                 inputFields[i].SetTextWithoutNotify("" + Math.Round(breakforce * 100f) / 100f);
             }
+            else if (i == 10)
+            {
+                (float, float) bounds = (0f, 1f);
+                Collider2D col = focused.GetComponent<Collider2D>();
+                sliders[i].SetValueWithoutNotify((col.sharedMaterial.friction - bounds.Item1) / bounds.Item2);
+                inputFields[i].SetTextWithoutNotify("" + Mathf.Round(col.sharedMaterial.friction * 100f) / 100f);
+            }
+            //else if (i == 10)
+            //{
+            //    (float, float) bounds = (0f, 1f);
+            //    Collider2D col = focused.GetComponent<Collider2D>();
+            //    sliders[i].SetValueWithoutNotify((col.bounciness - bounds.Item1) / bounds.Item2);
+            //    inputFields[i].SetTextWithoutNotify("" + Mathf.Round(col.bounciness * 100f) / 100f);
+            //}
+            //else if (i == 11)
+            //{
+            //    (float, float) bounds = (0f, 1f);
+            //    Collider2D col = focused.GetComponent<Collider2D>();
+            //    sliders[i].SetValueWithoutNotify((col.friction - bounds.Item1) / bounds.Item2);
+            //    inputFields[i].SetTextWithoutNotify("" + Mathf.Round(col.friction * 100f) / 100f);
+            //}
         }
     }
 
@@ -300,7 +328,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 1)
         {
-            (float, float) bounds = (0.01f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
             float length = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(length / Util.FixedRectWidthMultiplier, transcurr.localScale.y);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(length / Util.MoveableRectWidthMultiplier, transcurr.localScale.y);
@@ -308,7 +336,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 2)
         {
-            (float, float) bounds = (0.01f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
             float width = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             if (namecurr == "FixedRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.FixedRectHeightMultiplier);
             else if (namecurr == "MoveableRectangle") transcurr.localScale = new v2(transcurr.localScale.x, width / Util.MoveableRectHeightMultiplier);
@@ -346,7 +374,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 7)
         {
-            (float, float) bounds = (0.01f, 359f);
+            (float, float) bounds = (0f, 360f);
             float angle = bounds.Item1 + value / 1f * (bounds.Item2 - bounds.Item1);
             if (namecurr == "Force") this.focused.GetComponent<ForceControl>().setAngle(angle);
             else if (namecurr == "Velocity") this.focused.GetComponent<VelocityControl>().setAngle(angle);
@@ -372,6 +400,27 @@ public class PropertiesAreaScript: MonoBehaviour
             spring.setBreakForce(breakforce);
             inputFields[idx].SetTextWithoutNotify("" + Math.Round(breakforce * 100f) / 100f);
         }
+        else if (idx == 10)
+        {
+            (float, float) bounds = (0f, 1f);
+            Collider2D col = focused.GetComponent<Collider2D>();
+            float friction = bounds.Item1 + value * (bounds.Item2 - bounds.Item1);
+            col.sharedMaterial.friction = friction;
+            Attachable.ResetAllColliders();
+            inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(friction * 100f) / 100f);
+        }
+        //else if (idx == 10)
+        //{
+        //    (float, float) bounds = (0f, 1f);
+        //    Collider2D col = focused.GetComponent<Collider2D>();
+        //    float bounciness = bounds.Item1 + value * (bounds.Item2 - bounds.Item1);
+        //    col.sharedMaterial.bounciness = bounciness;
+        //    inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(bounciness * 100f) / 100f);
+        //}
+        //else if (idx == 11)
+        //{
+
+        //}
     }
 
     public void fieldValueChange(int idx)
@@ -392,7 +441,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 1)
         {
-            (float, float) bounds = (0.01f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
             float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             float length = value;
@@ -403,7 +452,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 2)
         {
-            (float, float) bounds = (0.01f, 100f);
+            (float, float) bounds = (0.01f, 1000f);
             float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             float width = value;
@@ -453,7 +502,7 @@ public class PropertiesAreaScript: MonoBehaviour
         }
         else if (idx == 7)
         {
-            (float, float) bounds = (0.01f, 359f);
+            (float, float) bounds = (0f, 360f);
             float value = (float)val;
             value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
             if (namecurr == "Force")
@@ -492,6 +541,31 @@ public class PropertiesAreaScript: MonoBehaviour
             sliders[idx].SetValueWithoutNotify((float)((breakforce - bounds.Item1) / bounds.Item2));
             if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Math.Round(breakforce * 100f) / 100f);
         }
+        else if (idx == 10)
+        {
+            (float, float) bounds = (0f, 1f);
+            Collider2D col = focused.GetComponent<Collider2D>();
+            float value = (float)val;
+            value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
+            col.sharedMaterial.friction = value;
+            Attachable.ResetAllColliders();
+            sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
+            if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+        }
+        //else if (idx == 10)
+        //{
+        //    (float, float) bounds = (0f, 1f);
+        //    Collider2D col = focused.GetComponent<Collider2D>();
+        //    float value = (float)val;
+        //    value = Mathf.Clamp(value, bounds.Item1, bounds.Item2);
+        //    col.sharedMaterial.bounciness = value;
+        //    sliders[idx].SetValueWithoutNotify((value - bounds.Item1) / bounds.Item2);
+        //    if ((text[text.Length - 1] != '.' && text[text.Length - 1] != '0') || (text[text.Length - 1] == '0' && !text.Contains("."))) inputFields[idx].SetTextWithoutNotify("" + Mathf.Round(value * 100f) / 100f);
+        //}
+        //else if (idx == 11)
+        //{
+
+        //}
     }
 
     public void fieldEndEdit(int idx)

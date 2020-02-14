@@ -9,6 +9,10 @@ public class RotateResizeable : MonoBehaviour
     private Transform trans;
     private bool onSprite = false;
     private int lastTouchCnt = 0;
+    private PropertiesAreaScript propertiesAreaScript;
+    public GameObject propertiesArea;
+
+    private float angleprev = -1f;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +24,7 @@ public class RotateResizeable : MonoBehaviour
     {
         col = this.GetComponent<Collider2D>();
         trans = this.GetComponent<Transform>();
+        propertiesAreaScript = propertiesArea.GetComponent<PropertiesAreaScript>();
     }
 
     // Update is called once per frame
@@ -80,6 +85,7 @@ public class RotateResizeable : MonoBehaviour
             float angledelta = angle - prevangle;
 
             transform.eulerAngles += new Vector3(0, 0, angledelta);
+            if (!(Mathf.Abs(angleprev - transform.eulerAngles.z) < Util.EPSILON)) { propertiesAreaScript.CoerceAdjustValues(7); angleprev = transform.eulerAngles.z; }
 
             Vector3 averagePosPrev = (pos2prev + pos1prev) / 2f;
             averagePosPrev.z = 0;
